@@ -18,6 +18,6 @@ func (o Comma) Precedence() uint8 {
 	return 0
 }
 
-func (o Comma) Solve(st OperandStack) (Operand, error) {
+func (o Comma) Solve(st *OperandStack) (Operand, error) {
 	return nil, nil
 }

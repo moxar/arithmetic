@@ -12,7 +12,7 @@ type Token interface {
 func tokensToString(input []Token) string {
 	var output string
 	for _, v := range input {
-		output += v.String()
+		output += " " + v.String()
 	}
 	return output
 }

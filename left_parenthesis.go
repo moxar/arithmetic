@@ -18,6 +18,6 @@ func (o LeftParenthesis) Precedence() uint8 {
 	return 0
 }
 
-func (o LeftParenthesis) Solve(st OperandStack) (Operand, error) {
+func (o LeftParenthesis) Solve(st *OperandStack) (Operand, error) {
 	return nil, nil
 }

@@ -20,7 +20,7 @@ func (o Minus) Precedence() uint8 {
 	return 1
 }
 
-func (o Minus) Solve(st OperandStack) (Operand, error) {
+func (o Minus) Solve(st *OperandStack) (Operand, error) {
 	right, ok := st.Pop()
 	if !ok {
 		return nil, fmt.Errorf("invalid operation: \"-\" must be followed by a valid operand or expression")
@@ -41,5 +41,5 @@ func (o Minus) Solve(st OperandStack) (Operand, error) {
 		return nil, fmt.Errorf("invalid operand: %s", err)
 	}
 
-	return l - r, nil
+	return Number(l - r), nil
 }

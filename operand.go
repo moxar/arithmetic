@@ -5,12 +5,12 @@ import "fmt"
 type Operand interface{}
 
 func ToFloat(o Operand) (float64, error) {
-	v, ok := o.(float64)
+	v, ok := o.(Number)
 	if !ok {
 		return 0, fmt.Errorf("expecing float, having %v(%T)", o, o)
 	}
 
-	return v, nil
+	return float64(v), nil
 }
 
 func ToInt(o Operand) (int, error) {
