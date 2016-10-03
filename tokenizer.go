@@ -28,11 +28,13 @@ func Tokenize(input string) ([]Token, error) {
 type Tokenizer struct {
 	reader  *bufio.Reader
 	payload string
+	prev    Token
 	output  []Token
 	err     error
 }
 
 func (t *Tokenizer) push(token Token) {
+	t.prev = token
 	t.output = append(t.output, token)
 }
 
@@ -97,12 +99,30 @@ func startState(t *Tokenizer) stateFunc {
 }
 
 func plusState(t *Tokenizer) stateFunc {
-	t.push(Plus{})
+	if t.prev == nil {
+		t.push(UnaryPlus{})
+		return startState
+	}
+	operand, operator := t.prev.Value()
+	if operand != nil || operator.Kind() == KindRightParenthesis {
+		t.push(Plus{})
+		return startState
+	}
+	t.push(UnaryPlus{})
 	return startState
 }
 
 func minusState(t *Tokenizer) stateFunc {
-	t.push(Minus{})
+	if t.prev == nil {
+		t.push(UnaryMinus{})
+		return startState
+	}
+	operand, operator := t.prev.Value()
+	if operand != nil || operator.Kind() == KindRightParenthesis {
+		t.push(Minus{})
+		return startState
+	}
+	t.push(UnaryMinus{})
 	return startState
 }
 
