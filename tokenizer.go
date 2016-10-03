@@ -79,6 +79,9 @@ func startState(t *Tokenizer) stateFunc {
 	case isModulo(r):
 		return moduloState
 
+	case isExponant(r):
+		return exponantState
+
 	case isLeftParenthesis(r):
 		return leftParenthesisState
 
@@ -128,6 +131,11 @@ func minusState(t *Tokenizer) stateFunc {
 
 func multiplyState(t *Tokenizer) stateFunc {
 	t.push(Multiply{})
+	return startState
+}
+
+func exponantState(t *Tokenizer) stateFunc {
+	t.push(Exponant{})
 	return startState
 }
 
@@ -184,6 +192,8 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	case isDivide(r):
 		fallthrough
 	case isModulo(r):
+		fallthrough
+	case isExponant(r):
 		fallthrough
 	case isRightParenthesis(r):
 		fallthrough
@@ -242,6 +252,10 @@ func isDivide(r rune) bool {
 
 func isModulo(r rune) bool {
 	return r == '%'
+}
+
+func isExponant(r rune) bool {
+	return r == '^'
 }
 
 func isSpace(r rune) bool {
