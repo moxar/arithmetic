@@ -28,14 +28,22 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 
 		if op.Kind() == KindOperation {
-			for v, ok := st.Pop(); ok; {
-
-				if v.Precedence() <= op.Precedence() {
-					output = append(output, v.(Token))
+			for {
+				v, ok := st.Pop()
+				if !ok {
+					break
 				}
+
+				if v.Precedence() > op.Precedence() {
+					output = append(output, v.(Token))
+					continue
+				}
+
+				st.Push(v)
+				break
 			}
 
-			output = append(output, op.(Token))
+			st.Push(op)
 			continue
 		}
 
@@ -74,7 +82,12 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 	}
 
-	for v, ok := st.Pop(); ok; {
+	for {
+
+		v, ok := st.Pop()
+		if !ok {
+			break
+		}
 		if v.Kind() == KindLeftParenthesis {
 			return nil, fmt.Errorf("mismatched parenthesis: %s", tokensToString(input))
 		}

@@ -1,6 +1,7 @@
 package arithmetic
 
 import (
+	"bufio"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,7 +11,7 @@ import (
 func Tokenize(input string) ([]Token, error) {
 
 	t := &Tokenizer{
-		input: input,
+		reader: bufio.NewReader(strings.NewReader(input)),
 	}
 
 	for state := startState; state != nil; {
@@ -25,11 +26,10 @@ func Tokenize(input string) ([]Token, error) {
 }
 
 type Tokenizer struct {
-	input  string
-	start  int
-	pos    int
-	output []Token
-	err    error
+	reader  *bufio.Reader
+	payload string
+	output  []Token
+	err     error
 }
 
 func (t *Tokenizer) push(token Token) {
@@ -37,29 +37,20 @@ func (t *Tokenizer) push(token Token) {
 }
 
 func (t *Tokenizer) read() (rune, bool) {
-	if len(t.input) < t.start+t.pos {
+	r, _, err := t.reader.ReadRune()
+	if err != nil {
 		return 0, false
 	}
 
-	r := t.input[t.start+t.pos]
-
-	t.pos++
-	return rune(r), true
+	return r, true
 }
 
 func (t *Tokenizer) unread() {
-	if t.pos > 0 {
-		t.pos--
-	}
-}
-
-func (t *Tokenizer) buffer() string {
-	return t.input[t.start : t.start+t.pos]
+	t.reader.UnreadRune()
 }
 
 func startState(t *Tokenizer) stateFunc {
-	t.start = t.pos
-	t.pos = 0
+	t.payload = ""
 
 	r, ok := t.read()
 	if !ok {
@@ -71,8 +62,20 @@ func startState(t *Tokenizer) stateFunc {
 	case isSpace(r):
 		return startState
 
-	case isOperator(r):
-		return operatorState
+	case isPlus(r):
+		return plusState
+
+	case isMinus(r):
+		return minusState
+
+	case isDivide(r):
+		return divideState
+
+	case isMultiply(r):
+		return multiplyState
+
+	case isModulo(r):
+		return moduloState
 
 	case isLeftParenthesis(r):
 		return leftParenthesisState
@@ -83,12 +86,9 @@ func startState(t *Tokenizer) stateFunc {
 	case isComma(r):
 		return commaState
 
-	case isDigit(r):
-		fallthrough
-	case isLetter(r):
-		fallthrough
-	case isDot(r):
-		return wordState
+	case isAlphaNum(r):
+		t.payload += string(r)
+		return alphaNumState
 
 	default:
 		t.err = fmt.Errorf("unrecognized token: %s", string(r))
@@ -96,25 +96,28 @@ func startState(t *Tokenizer) stateFunc {
 	}
 }
 
-func operatorState(t *Tokenizer) stateFunc {
+func plusState(t *Tokenizer) stateFunc {
+	t.push(Plus{})
+	return startState
+}
 
-	// NOTE: Unary operator ?
-	v := t.buffer()
-	var token Token
-	switch v {
-	case "+":
-		token = Plus{}
-	case "-":
-		token = Minus{}
-	case "*":
-		token = Multiply{}
-	case "/":
-		token = Divide{}
-	case "%":
-		token = Modulo{}
-	}
+func minusState(t *Tokenizer) stateFunc {
+	t.push(Minus{})
+	return startState
+}
 
-	t.push(token)
+func multiplyState(t *Tokenizer) stateFunc {
+	t.push(Multiply{})
+	return startState
+}
+
+func divideState(t *Tokenizer) stateFunc {
+	t.push(Divide{})
+	return startState
+}
+
+func moduloState(t *Tokenizer) stateFunc {
+	t.push(Modulo{})
 	return startState
 }
 
@@ -133,11 +136,11 @@ func commaState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func wordState(t *Tokenizer) stateFunc {
+func alphaNumState(t *Tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
-		token, err := parse(t.buffer())
+		token, err := parse(t.payload)
 		if err != nil {
 			t.err = err
 			return nil
@@ -152,13 +155,21 @@ func wordState(t *Tokenizer) stateFunc {
 		fallthrough
 	case isComma(r):
 		fallthrough
-	case isOperator(r):
+	case isPlus(r):
+		fallthrough
+	case isMinus(r):
+		fallthrough
+	case isMultiply(r):
+		fallthrough
+	case isDivide(r):
+		fallthrough
+	case isModulo(r):
 		fallthrough
 	case isRightParenthesis(r):
 		fallthrough
 	case isLeftParenthesis(r):
 		t.unread()
-		token, err := parse(t.buffer())
+		token, err := parse(t.payload)
 		if err != nil {
 			t.err = err
 			return nil
@@ -166,12 +177,9 @@ func wordState(t *Tokenizer) stateFunc {
 		t.push(token)
 		return startState
 
-	case isDigit(r):
-		fallthrough
-	case isLetter(r):
-		fallthrough
-	case isDot(r):
-		return wordState
+	case isAlphaNum(r):
+		t.payload += string(r)
+		return alphaNumState
 
 	default:
 		t.err = fmt.Errorf("unrecognized token: %s", string(r))
@@ -180,12 +188,8 @@ func wordState(t *Tokenizer) stateFunc {
 
 }
 
-func isDigit(r rune) bool {
-	return unicode.IsDigit(r)
-}
-
-func isLetter(r rune) bool {
-	return unicode.IsLetter(r) || r == '_'
+func isAlphaNum(r rune) bool {
+	return unicode.IsDigit(r) || unicode.IsLetter(r) || r == '_' || r == '.'
 }
 
 func isLeftParenthesis(r rune) bool {
@@ -200,12 +204,24 @@ func isComma(r rune) bool {
 	return r == ','
 }
 
-func isDot(r rune) bool {
-	return r == '.'
+func isPlus(r rune) bool {
+	return r == '+'
 }
 
-func isOperator(r rune) bool {
-	return strings.ContainsRune("/*-+%", r)
+func isMinus(r rune) bool {
+	return r == '-'
+}
+
+func isMultiply(r rune) bool {
+	return r == '*'
+}
+
+func isDivide(r rune) bool {
+	return r == '/'
+}
+
+func isModulo(r rune) bool {
+	return r == '%'
 }
 
 func isSpace(r rune) bool {

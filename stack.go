@@ -5,9 +5,10 @@ type stack struct {
 }
 
 func (s *stack) pop() (interface{}, bool) {
-	if len(s.values) > 1 {
-		v := s.values[len(s.values)-1]
-		s.values = s.values[0 : len(s.values)-1]
+	last := len(s.values) - 1
+	if last >= 0 {
+		v := s.values[last]
+		s.values = s.values[:last]
 		return v, true
 	}
 	return nil, false
