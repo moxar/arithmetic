@@ -1,5 +1,10 @@
 package arithmetic
 
+import (
+	"errors"
+	"fmt"
+)
+
 type stack struct {
 	values []interface{}
 }
@@ -34,6 +39,34 @@ func (s *OperandStack) Push(v Operand) {
 	s.stack.push(v)
 }
 
+func (s *OperandStack) PopInt() (int, error) {
+	op, ok := s.stack.pop()
+	if !ok {
+		return 0, errors.New("empty stack")
+	}
+
+	v, ok := op.(Number)
+	if !ok {
+		return 0, fmt.Errorf("%s is not a numeric value", op)
+	}
+
+	return int(v), nil
+}
+
+func (s *OperandStack) PopFloat() (float64, error) {
+	op, ok := s.stack.pop()
+	if !ok {
+		return 0, errors.New("empty stack")
+	}
+
+	v, ok := op.(Number)
+	if !ok {
+		return 0, fmt.Errorf("%s is not a numeric value", op)
+	}
+
+	return float64(v), nil
+}
+
 type OperatorStack struct {
 	stack
 }
@@ -64,5 +97,5 @@ func (s *ArityStack) Push(v int) {
 }
 
 func (s *ArityStack) Inc() {
-	s.stack.push( s.Pop() + 1)
+	s.stack.push(s.Pop() + 1)
 }

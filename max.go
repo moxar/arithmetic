@@ -7,39 +7,31 @@ import (
 )
 
 func Max(st *OperandStack) (Operand, error) {
-	s, ok := st.Pop()
-	if !ok {
-		return nil, errors.New("stack error: first element must be argument number")
+
+	var max float64
+	var def bool
+
+	size, err := st.PopInt()
+	if err != nil {
+		return nil, fmt.Errorf("max error: undefined argument len: %s", err)
 	}
 
-	var m float64
-	var def bool
-	
-	size, ok := s.(Number)
-	if !ok {
-		return nil, errors.New("stack error: first element must be integer")
-	}
-	for i := 0; i < int(size); i++ {
-		op, ok := st.Pop()
-		if !ok {
-			return nil, fmt.Errorf("\"max() \" %d arguments, having %d:", int(size), i)
+	for i := 0; i < size; i++ {
+		challenger, err := st.PopFloat()
+		if err != nil {
+			return nil, fmt.Errorf("max error: argument must be float: %s", err)
 		}
-		
-		num, ok := op.(Number)
-		if !ok {
-			return nil, fmt.Errorf("\"max() \" expects arguments, numeric arguments, having %s:", op)
-		}
-		
+
 		if !def {
-			m = float64(num)
+			max = challenger
 			def = true
 		}
-		m = math.Max(m, float64(num))
+		max = math.Max(max, challenger)
 	}
-	
+
 	if !def {
-		return nil, errors.New("invalid usage of \"max()\": at least one argument is required")
+		return nil, errors.New("max error: no argument provided")
 	}
-	
-	return Number(m), nil
+
+	return Number(max), nil
 }

@@ -268,7 +268,7 @@ func parse(input string) (Token, error) {
 	if ok {
 		return variable, nil
 	}
-	
+
 	function, ok := functions[input]
 	if ok {
 		return function, nil

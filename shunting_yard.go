@@ -59,7 +59,7 @@ func ShuntingYard(input []Token) ([]Token, error) {
 				if !ok {
 					return nil, fmt.Errorf("invalid expression at position %d: %s...", i+1, tokensToString(input[:i+1]))
 				}
-				
+
 				if v.Kind() == KindLeftParenthesis {
 					st.Push(v)
 					break
