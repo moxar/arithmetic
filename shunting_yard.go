@@ -7,6 +7,7 @@ import (
 func ShuntingYard(input []Token) ([]Token, error) {
 
 	st := &OperatorStack{}
+	as := &ArityStack{}
 	var output []Token
 
 	for i, t := range input {
@@ -18,6 +19,7 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 
 		if op.Kind() == KindFunction {
+			as.Push(1)
 			st.Push(op)
 			continue
 		}
@@ -35,6 +37,9 @@ func ShuntingYard(input []Token) ([]Token, error) {
 				}
 
 				if v.Precedence() > op.Precedence() {
+					if v.Kind() == KindFunction {
+						output = append(output, Number(as.Pop()))
+					}
 					output = append(output, v.(Token))
 					continue
 				}
@@ -48,16 +53,21 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 
 		if op.Kind() == KindComma {
+			as.Inc()
 			for {
 				v, ok := st.Pop()
 				if !ok {
 					return nil, fmt.Errorf("invalid expression at position %d: %s...", i+1, tokensToString(input[:i+1]))
 				}
-
+				
 				if v.Kind() == KindLeftParenthesis {
+					st.Push(v)
 					break
 				}
 
+				if v.Kind() == KindFunction {
+					output = append(output, Number(as.Pop()))
+				}
 				output = append(output, v.(Token))
 			}
 			continue
@@ -75,6 +85,9 @@ func ShuntingYard(input []Token) ([]Token, error) {
 					break
 				}
 
+				if v.Kind() == KindFunction {
+					output = append(output, Number(as.Pop()))
+				}
 				output = append(output, v.(Token))
 
 			}
@@ -90,6 +103,9 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 		if v.Kind() == KindLeftParenthesis {
 			return nil, fmt.Errorf("mismatched parenthesis: %s", tokensToString(input))
+		}
+		if v.Kind() == KindFunction {
+			output = append(output, Number(as.Pop()))
 		}
 		output = append(output, v.(Token))
 	}

@@ -268,6 +268,11 @@ func parse(input string) (Token, error) {
 	if ok {
 		return variable, nil
 	}
+	
+	function, ok := functions[input]
+	if ok {
+		return function, nil
+	}
 
 	f, err := strconv.ParseFloat(input, 64)
 	if err != nil {

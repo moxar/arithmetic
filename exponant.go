@@ -44,5 +44,5 @@ func (o Exponant) Solve(st *OperandStack) (Operand, error) {
 		return nil, fmt.Errorf("invalid operand: %s", err)
 	}
 
-	return Number(math.Pow(l,r)), nil
+	return Number(math.Pow(l, r)), nil
 }

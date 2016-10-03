@@ -49,3 +49,20 @@ func (s *OperatorStack) Pop() (Operator, bool) {
 func (s *OperatorStack) Push(v Operator) {
 	s.stack.push(v)
 }
+
+type ArityStack struct {
+	stack
+}
+
+func (s *ArityStack) Pop() int {
+	v, _ := s.stack.pop()
+	return v.(int)
+}
+
+func (s *ArityStack) Push(v int) {
+	s.stack.push(v)
+}
+
+func (s *ArityStack) Inc() {
+	s.stack.push( s.Pop() + 1)
+}
