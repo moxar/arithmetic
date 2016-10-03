@@ -1,7 +1,7 @@
 package arithmetic
 
-type Operator interface{
+type Operator interface {
 	Kind() Kind
 	Precedence() uint8
-	Solve(OperandStack) Operand
+	Solve(OperandStack) (Operand, error)
 }

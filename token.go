@@ -1,10 +1,10 @@
 package arithmetic
 
-import(
+import (
 	"fmt"
 )
 
-type Token interface{
+type Token interface {
 	fmt.Stringer
 	Value() (Operand, Operator)
 }

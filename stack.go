@@ -1,13 +1,13 @@
 package arithmetic
 
-type stack struct{
+type stack struct {
 	values []interface{}
 }
 
 func (s *stack) pop() (interface{}, bool) {
 	if len(s.values) > 1 {
 		v := s.values[len(s.values)-1]
-		s.values = s.values[0:len(s.values)-1]
+		s.values = s.values[0 : len(s.values)-1]
 		return v, true
 	}
 	return nil, false
@@ -17,7 +17,7 @@ func (s *stack) push(v interface{}) {
 	s.values = append(s.values, v)
 }
 
-type OperandStack struct{
+type OperandStack struct {
 	stack
 }
 
@@ -33,7 +33,7 @@ func (s *OperandStack) Push(v Operand) {
 	s.stack.push(v)
 }
 
-type OperatorStack struct{
+type OperatorStack struct {
 	stack
 }
 
