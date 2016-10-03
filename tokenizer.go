@@ -249,6 +249,12 @@ func isSpace(r rune) bool {
 }
 
 func parse(input string) (Token, error) {
+
+	variable, ok := variables[input]
+	if ok {
+		return variable, nil
+	}
+
 	f, err := strconv.ParseFloat(input, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid numeric value: %s", input)
