@@ -4,6 +4,11 @@ import (
 	"fmt"
 )
 
+func init() {
+	RegisterVariable("pi", 3.142)
+	RegisterVariable("e", 2.718)
+}
+
 var variables = map[string]variable{}
 
 func RegisterVariable(label string, value interface{}) {
