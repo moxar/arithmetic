@@ -2,11 +2,21 @@ package arithmetic
 
 import (
 	"fmt"
+	"math"
 )
 
 func init() {
-	RegisterVariable("pi", 3.142)
-	RegisterVariable("e", 2.718)
+	RegisterVariable("e", math.E)
+	RegisterVariable("pi", math.Pi)
+	RegisterVariable("phi", math.Phi)
+	RegisterVariable("sqrt2", math.Sqrt2)
+	RegisterVariable("sqrte", math.SqrtE)
+	RegisterVariable("sqrtpi", math.SqrtPi)
+	RegisterVariable("sqrtphi", math.SqrtPhi)
+	RegisterVariable("ln2", math.Ln2)
+	RegisterVariable("log2e", math.Log2E)
+	RegisterVariable("ln10", math.Ln10)
+	RegisterVariable("ln10e", math.Log10E)
 }
 
 var variables = map[string]variable{}
