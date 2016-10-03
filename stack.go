@@ -37,14 +37,14 @@ type OperatorStack struct{
 	stack
 }
 
-func (s *OperatorStack) Pop() (Operand, bool) {
+func (s *OperatorStack) Pop() (Operator, bool) {
 	v, ok := s.stack.pop()
 	if !ok {
 		return nil, false
 	}
-	return v.(Operand), true
+	return v.(Operator), true
 }
 
-func (s *OperatorStack) Push(v Operand) {
+func (s *OperatorStack) Push(v Operator) {
 	s.stack.push(v)
 }
