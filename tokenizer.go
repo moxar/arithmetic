@@ -95,6 +95,12 @@ func startState(t *Tokenizer) stateFunc {
 	case isEqual(r):
 		return equalState
 
+	case isGreater(r):
+		return greaterState
+
+	case isLower(r):
+		return lowerState
+
 	case isExclamation(r):
 		return exclamationState
 
@@ -188,6 +194,42 @@ func equalState(t *Tokenizer) stateFunc {
 	return startState
 }
 
+func greaterState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \">\"")
+		return nil
+	}
+
+	if isEqual(r) {
+		t.push(GreaterEqual{})
+		return startState
+	}
+	t.unread()
+
+	t.push(Greater{})
+	return startState
+}
+
+func lowerState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"<\"")
+		return nil
+	}
+
+	if isEqual(r) {
+		t.push(LowerEqual{})
+		return startState
+	}
+	t.unread()
+
+	t.push(Lower{})
+	return startState
+}
+
 func exclamationState(t *Tokenizer) stateFunc {
 
 	r, ok := t.read()
@@ -239,6 +281,10 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	case isRightParenthesis(r):
 		fallthrough
 	case isEqual(r):
+		fallthrough
+	case isGreater(r):
+		fallthrough
+	case isLower(r):
 		fallthrough
 	case isExclamation(r):
 		fallthrough
