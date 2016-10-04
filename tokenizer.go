@@ -276,6 +276,13 @@ func parse(input string) (Token, error) {
 		return function, nil
 	}
 
+	for _, exp := range expressions {
+		op, ok := exp(input)
+		if ok {
+			return op, nil
+		}
+	}
+
 	f, err := strconv.ParseFloat(input, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid numeric value: %s", input)
