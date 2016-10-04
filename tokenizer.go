@@ -2,6 +2,7 @@ package arithmetic
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -91,6 +92,12 @@ func startState(t *Tokenizer) stateFunc {
 	case isComma(r):
 		return commaState
 
+	case isEqual(r):
+		return equalState
+
+	case isExclamation(r):
+		return exclamationState
+
 	case isAlphaNum(r):
 		t.payload += string(r)
 		return alphaNumState
@@ -164,6 +171,40 @@ func commaState(t *Tokenizer) stateFunc {
 	return startState
 }
 
+func equalState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"=\"")
+		return nil
+	}
+
+	if !isEqual(r) {
+		t.err = fmt.Errorf("unrecognized token \"=%s\"", string(r))
+		return nil
+	}
+
+	t.push(Equal{})
+	return startState
+}
+
+func exclamationState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"!\"")
+		return nil
+	}
+
+	if !isEqual(r) {
+		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
+		return nil
+	}
+
+	t.push(Different{})
+	return startState
+}
+
 func alphaNumState(t *Tokenizer) stateFunc {
 
 	r, ok := t.read()
@@ -196,6 +237,10 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	case isExponant(r):
 		fallthrough
 	case isRightParenthesis(r):
+		fallthrough
+	case isEqual(r):
+		fallthrough
+	case isExclamation(r):
 		fallthrough
 	case isLeftParenthesis(r):
 		t.unread()
@@ -232,6 +277,22 @@ func isRightParenthesis(r rune) bool {
 
 func isComma(r rune) bool {
 	return r == ','
+}
+
+func isEqual(r rune) bool {
+	return r == '='
+}
+
+func isGreater(r rune) bool {
+	return r == '>'
+}
+
+func isLower(r rune) bool {
+	return r == '<'
+}
+
+func isExclamation(r rune) bool {
+	return r == '!'
 }
 
 func isPlus(r rune) bool {
