@@ -5,13 +5,13 @@ import (
 )
 
 func ShuntingYard(input []Token) ([]Token, error) {
-	
+
 	st := &OperatorStack{}
 	as := &ArityStack{}
 	var output []Token
 
 	for i, t := range input {
-		
+
 		_, op := t.Value()
 
 		if op == nil {
@@ -82,7 +82,7 @@ func ShuntingYard(input []Token) ([]Token, error) {
 				}
 
 				if v.Kind() == KindLeftParenthesis {
-					
+
 					v, ok := st.Pop()
 					if !ok {
 						break
@@ -92,7 +92,7 @@ func ShuntingYard(input []Token) ([]Token, error) {
 						output = append(output, Number(as.Pop()), v.(Token))
 						break
 					}
-					
+
 					st.Push(v)
 					break
 				}
@@ -116,6 +116,6 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 		output = append(output, v.(Token))
 	}
-	
+
 	return output, nil
 }

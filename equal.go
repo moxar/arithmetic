@@ -30,7 +30,7 @@ func (o Equal) Solve(st *OperandStack) (Operand, error) {
 	if !ok {
 		return nil, fmt.Errorf("invalid operation: \"== %s\" must be preceeded by a valid operand or expression", right)
 	}
-	
+
 	b, ok := equals(left, right)
 	if !ok {
 		return nil, fmt.Errorf("invalid expression %s == %s", left, right)

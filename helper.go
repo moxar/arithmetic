@@ -23,7 +23,7 @@ func ToInt(o Operand) (int, error) {
 }
 
 func equals(o1, o2 Operand) (bool, bool) {
-	
+
 	// Compare floats.
 	left, errLeft := ToFloat(o1)
 	right, errRight := ToFloat(o2)
