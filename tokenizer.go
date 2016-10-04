@@ -98,6 +98,9 @@ func startState(t *Tokenizer) stateFunc {
 	case isGreater(r):
 		return greaterState
 
+	case isDoubleQuote(r):
+		return doubleQuoteState
+
 	case isLower(r):
 		return lowerState
 
@@ -247,6 +250,24 @@ func exclamationState(t *Tokenizer) stateFunc {
 	return startState
 }
 
+func doubleQuoteState(t *Tokenizer) stateFunc {
+
+	for {
+		r, ok := t.read()
+		if !ok {
+			t.err = fmt.Errorf("expecting \" at end of string: %s", t.payload)
+			return nil
+		}
+
+		if isDoubleQuote(r) {
+			t.push(String(t.payload))
+			return startState
+		}
+
+		t.payload += string(r)
+	}
+}
+
 func alphaNumState(t *Tokenizer) stateFunc {
 
 	r, ok := t.read()
@@ -287,6 +308,8 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	case isLower(r):
 		fallthrough
 	case isExclamation(r):
+		fallthrough
+	case isDoubleQuote(r):
 		fallthrough
 	case isLeftParenthesis(r):
 		t.unread()
@@ -363,6 +386,10 @@ func isModulo(r rune) bool {
 
 func isExponant(r rune) bool {
 	return r == '^'
+}
+
+func isDoubleQuote(r rune) bool {
+	return r == '"'
 }
 
 func isSpace(r rune) bool {
