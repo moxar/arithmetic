@@ -3,6 +3,7 @@ package arithmetic
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 func init() {
@@ -25,9 +26,14 @@ var variables = map[string]variable{}
 
 func RegisterVariable(label string, value interface{}) {
 
-	_, ok := variables[label]
-	if ok {
-		panic(fmt.Sprintf("variable %s defined twice", label))
+	label = strings.ToLower(label)
+
+	if _, ok := functions[label]; ok {
+		panic(fmt.Sprintf("%s already defined as function", label))
+	}
+
+	if _, ok := variables[label]; ok {
+		panic(fmt.Sprintf("%s already defined as variable", label))
 	}
 
 	var v variable

@@ -264,6 +264,8 @@ func isSpace(r rune) bool {
 
 func parse(input string) (Token, error) {
 
+	input = strings.ToLower(input)
+
 	variable, ok := variables[input]
 	if ok {
 		return variable, nil

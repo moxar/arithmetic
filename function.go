@@ -2,6 +2,7 @@ package arithmetic
 
 import (
 	"fmt"
+	"strings"
 )
 
 var functions = map[string]Token{}
@@ -12,9 +13,14 @@ func RegisterFunction(label string, f SolveFunc) {
 		panic(fmt.Sprintf("function %s is nil", label))
 	}
 
-	_, ok := functions[label]
-	if ok {
-		panic(fmt.Sprintf("function %s defined twice", label))
+	label = strings.ToLower(label)
+
+	if _, ok := functions[label]; ok {
+		panic(fmt.Sprintf("%s already defined as function", label))
+	}
+
+	if _, ok := variables[label]; ok {
+		panic(fmt.Sprintf("%s already defined as variable", label))
 	}
 
 	var o function
