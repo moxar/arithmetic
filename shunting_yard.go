@@ -5,12 +5,13 @@ import (
 )
 
 func ShuntingYard(input []Token) ([]Token, error) {
-
+	
 	st := &OperatorStack{}
 	as := &ArityStack{}
 	var output []Token
 
 	for i, t := range input {
+		
 		_, op := t.Value()
 
 		if op == nil {
@@ -80,16 +81,22 @@ func ShuntingYard(input []Token) ([]Token, error) {
 					return nil, fmt.Errorf("invalid expression at position %d: %s...", i+1, tokensToString(input[:i+1]))
 				}
 
-				// NOTE: What if there is a function ?
 				if v.Kind() == KindLeftParenthesis {
+					
+					v, ok := st.Pop()
+					if !ok {
+						break
+					}
+
+					if v.Kind() == KindFunction {
+						output = append(output, Number(as.Pop()), v.(Token))
+						break
+					}
+					
+					st.Push(v)
 					break
 				}
-
-				if v.Kind() == KindFunction {
-					output = append(output, Number(as.Pop()))
-				}
 				output = append(output, v.(Token))
-
 			}
 			continue
 		}
@@ -109,6 +116,6 @@ func ShuntingYard(input []Token) ([]Token, error) {
 		}
 		output = append(output, v.(Token))
 	}
-
+	
 	return output, nil
 }
