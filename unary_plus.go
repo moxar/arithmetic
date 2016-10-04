@@ -5,7 +5,7 @@ import "fmt"
 type UnaryPlus struct{}
 
 func (o UnaryPlus) String() string {
-	return "\u02d6"
+	return "+"
 }
 
 func (o UnaryPlus) Value() (Operand, Operator) {
