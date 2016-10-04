@@ -6,6 +6,10 @@ import (
 	"math"
 )
 
+func init() {
+	RegisterFunction("max", Max)
+}
+
 func Max(st *OperandStack) (Operand, error) {
 
 	var max float64

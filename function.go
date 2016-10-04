@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-func init() {
-	RegisterFunction("max", Max)
-}
-
 var functions = map[string]Token{}
 
 func RegisterFunction(label string, f SolveFunc) {

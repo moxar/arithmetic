@@ -17,6 +17,8 @@ func init() {
 	RegisterVariable("log2e", math.Log2E)
 	RegisterVariable("ln10", math.Ln10)
 	RegisterVariable("ln10e", math.Log10E)
+	RegisterVariable("true", true)
+	RegisterVariable("false", false)
 }
 
 var variables = map[string]variable{}
@@ -34,6 +36,8 @@ func RegisterVariable(label string, value interface{}) {
 	switch t := value.(type) {
 	case float64:
 		v.operand = Number(t)
+	case bool:
+		v.operand = Boolean(t)
 	default:
 		panic(fmt.Sprintf("forbidden variable %s type %T", label, value))
 	}

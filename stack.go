@@ -67,6 +67,20 @@ func (s *OperandStack) PopFloat() (float64, error) {
 	return float64(v), nil
 }
 
+func (s *OperandStack) PopBool() (bool, error) {
+	op, ok := s.stack.pop()
+	if !ok {
+		return false, errors.New("empty stack")
+	}
+
+	v, ok := op.(Boolean)
+	if !ok {
+		return false, fmt.Errorf("%s is not a boolean", op)
+	}
+
+	return bool(v), nil
+}
+
 type OperatorStack struct {
 	stack
 }
