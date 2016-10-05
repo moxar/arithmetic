@@ -1,5 +1,9 @@
 package arithmetic
 
+import (
+	"errors"
+)
+
 func Solve(input []interface{}) (interface{}, error) {
 	st := &stack{}
 
@@ -37,5 +41,10 @@ func Solve(input []interface{}) (interface{}, error) {
 	}
 
 	out, _ := st.pop()
+
+	if _, ok := st.pop(); ok {
+		return nil, errors.New("operator stack should be empty")
+	}
+
 	return out, nil
 }

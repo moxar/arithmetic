@@ -87,6 +87,16 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{f("max"), leftParenthesis{}, 2.0, comma{}, variable{"e", math.E}, rightParenthesis{}},
 			err: false,
 		},
+		{
+			in:  "\"random\" \"string\"",
+			out: []interface{}{"random", "string"},
+			err: false,
+		},
+		{
+			in:  "\"random string 2\"",
+			out: []interface{}{"random string 2"},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)

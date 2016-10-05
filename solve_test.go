@@ -78,6 +78,21 @@ func TestSolve(t *testing.T) {
 			out: 10.0,
 			err: false,
 		},
+		{
+			in:  []interface{}{2.0, 3.0, minus{}},
+			out: -1.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 3.0},
+			out: nil,
+			err: true,
+		},
+		{
+			in:  []interface{}{"random", "string"},
+			out: nil,
+			err: true,
+		},
 	} {
 
 		out, err := Solve(c.in)

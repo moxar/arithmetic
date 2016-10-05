@@ -99,8 +99,8 @@ func startState(t *Tokenizer) stateFunc {
 		// 	case isGreater(r):
 		// 		return greaterState
 		//
-		// 	case isDoubleQuote(r):
-		// 		return doubleQuoteState
+	case isDoubleQuote(r):
+		return doubleQuoteState
 		//
 		// 	case isLower(r):
 		// 		return lowerState
@@ -248,23 +248,23 @@ func commaState(t *Tokenizer) stateFunc {
 // 	return startState
 // }
 //
-// func doubleQuoteState(t *Tokenizer) stateFunc {
-//
-// 	for {
-// 		r, ok := t.read()
-// 		if !ok {
-// 			t.err = fmt.Errorf("expecting \" at end of string: %s", t.payload)
-// 			return nil
-// 		}
-//
-// 		if isDoubleQuote(r) {
-// 			t.push(t.payload)
-// 			return startState
-// 		}
-//
-// 		t.payload += string(r)
-// 	}
-// }
+func doubleQuoteState(t *Tokenizer) stateFunc {
+
+	for {
+		r, ok := t.read()
+		if !ok {
+			t.err = fmt.Errorf("expecting \" at end of string: %s", t.payload)
+			return nil
+		}
+
+		if isDoubleQuote(r) {
+			t.push(t.payload)
+			return startState
+		}
+
+		t.payload += string(r)
+	}
+}
 
 func alphaNumState(t *Tokenizer) stateFunc {
 
@@ -304,8 +304,8 @@ func alphaNumState(t *Tokenizer) stateFunc {
 		// 		fallthrough
 		// 	case isExclamation(r):
 		// 		fallthrough
-		// 	case isDoubleQuote(r):
-		// 		fallthrough
+	case isDoubleQuote(r):
+		fallthrough
 	case isrightParenthesis(r):
 		fallthrough
 	case isleftParenthesis(r):
