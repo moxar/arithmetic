@@ -75,9 +75,9 @@ func startState(t *Tokenizer) stateFunc {
 		// 	case isDivide(r):
 		// 		return divideState
 		//
-		// 	case isMultiply(r):
-		// 		return multiplyState
-		//
+	case isMultiply(r):
+		return multiplyState
+
 		// 	case isModulo(r):
 		// 		return moduloState
 		//
@@ -140,10 +140,11 @@ func minusState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-// func multiplyState(t *Tokenizer) stateFunc {
-// 	t.push(Multiply{})
-// 	return startState
-// }
+func multiplyState(t *Tokenizer) stateFunc {
+	t.push(multiply{})
+	return startState
+}
+
 //
 // func exponantState(t *Tokenizer) stateFunc {
 // 	t.push(Exponant{})
@@ -279,13 +280,14 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	switch {
 
 	case isSpace(r):
+		fallthrough
 		// 		fallthrough
 		// 	case isComma(r):
 		// 		fallthrough
 		// 	case isPlus(r):
 		// 		fallthrough
-		// 	case isMultiply(r):
-		// 		fallthrough
+	case isMultiply(r):
+		fallthrough
 		// 	case isDivide(r):
 		// 		fallthrough
 		// 	case isModulo(r):
@@ -305,7 +307,6 @@ func alphaNumState(t *Tokenizer) stateFunc {
 		// 	case isRightParenthesis(r):
 		// 		fallthrough
 		// 	case isLeftParenthesis(r):
-		fallthrough
 	case isMinus(r):
 		t.unread()
 		token, err := parse(t.payload)
@@ -324,7 +325,6 @@ func alphaNumState(t *Tokenizer) stateFunc {
 		t.err = fmt.Errorf("unrecognized token: %s", string(r))
 		return nil
 	}
-
 }
 
 func isAlphaNum(r rune) bool {

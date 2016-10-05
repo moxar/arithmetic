@@ -15,10 +15,19 @@ func ShuntingYard(input []interface{}) ([]interface{}, error) {
 		// 			os.push(v)
 
 		case operator:
+			op := v
 			for {
 				v, ok := os.pop()
 				if !ok {
 					break
+				}
+
+				if v, ok := v.(operator); ok {
+					if v.precedence() < op.precedence() {
+						os.push(v)
+						break
+					}
+					output = append(output, v)
 				}
 
 				// 				if v, ok := v.(function); ok {
@@ -27,13 +36,6 @@ func ShuntingYard(input []interface{}) ([]interface{}, error) {
 				// 					continue
 				// 				}
 
-				if _, ok := v.(operator); ok {
-					output = append(output, v)
-					continue
-				}
-
-				os.push(v)
-				break
 			}
 			os.push(v)
 

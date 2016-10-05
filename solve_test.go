@@ -23,14 +23,39 @@ func TestSolve(t *testing.T) {
 			err: true,
 		},
 		{
+			in:  []interface{}{3.0, 2.0, minus{}, minus{}},
+			out: nil,
+			err: true,
+		},
+		{
 			in:  []interface{}{3.0, 2.0, minus{}},
 			out: 1.0,
 			err: false,
 		},
 		{
-			in:  []interface{}{3.0, 2.0, minus{}, minus{}},
+			in:  []interface{}{multiply{}},
 			out: nil,
 			err: true,
+		},
+		{
+			in:  []interface{}{3.0, 2.0, multiply{}, multiply{}},
+			out: nil,
+			err: true,
+		},
+		{
+			in:  []interface{}{3.0, 2.0, multiply{}},
+			out: 6.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{3.0, 2.0, multiply{}, 3.0, minus{}},
+			out: 3.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, 2.0, 3.0, multiply{}, minus{}, 4.0, minus{}},
+			out: -9.0,
+			err: false,
 		},
 	} {
 

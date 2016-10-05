@@ -1,7 +1,5 @@
 package arithmetic
 
-import "fmt"
-
 type minus struct{}
 
 func (o minus) String() string {
@@ -15,12 +13,12 @@ func (o minus) precedence() uint8 {
 func (o minus) solve(st *stack) (interface{}, error) {
 	right, err := st.popFloat()
 	if err != nil {
-		return nil, fmt.Errorf("invalid operation: \"-\" must be followed by a valid operand or expression")
+		return nil, rightError(o)
 	}
 
 	left, err := st.popFloat()
 	if err != nil {
-		return nil, fmt.Errorf("invalid operation: \"- %v\" must be preceeded by a valid operand or expression", right)
+		return nil, leftError(o, right)
 	}
 
 	return left - right, nil
