@@ -1,16 +1,17 @@
 package arithmetic
 
-// type LeftParenthesis struct{}
-//
-// func (o LeftParenthesis) String() string {
-// 	return "("
-// }
-//
-// type RightParenthesis struct{}
-//
-// func (o RightParenthesis) String() string {
-// 	return ")"
-// }
+type leftParenthesis struct{}
+
+func (o leftParenthesis) String() string {
+	return "("
+}
+
+type rightParenthesis struct{}
+
+func (o rightParenthesis) String() string {
+	return ")"
+}
+
 //
 // type Comma struct{}
 //

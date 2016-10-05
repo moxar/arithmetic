@@ -84,11 +84,11 @@ func startState(t *Tokenizer) stateFunc {
 		// 	case isExponant(r):
 		// 		return exponantState
 		//
-		// 	case isLeftParenthesis(r):
-		// 		return leftParenthesisState
-		//
-		// 	case isRightParenthesis(r):
-		// 		return rightParenthesisState
+	case isleftParenthesis(r):
+		return leftParenthesisState
+
+	case isrightParenthesis(r):
+		return rightParenthesisState
 		//
 		// 	case isComma(r):
 		// 		return commaState
@@ -120,7 +120,7 @@ func startState(t *Tokenizer) stateFunc {
 
 // func plusState(t *Tokenizer) stateFunc {
 //
-// 	if _, ok := t.prev.(RightParenthesis); ok {
+// 	if _, ok := t.prev.(rightParenthesis); ok {
 // 		t.push(Plus{})
 // 		return startState
 // 	}
@@ -131,12 +131,14 @@ func startState(t *Tokenizer) stateFunc {
 
 func minusState(t *Tokenizer) stateFunc {
 
-	// 	if _, ok := t.prev.(RightParenthesis); ok {
-	t.push(minus{})
-	// 		return startState
-	// 	}
-
-	// 	t.push(UnaryMinus{})
+	switch t.prev.(type) {
+	case rightParenthesis:
+		t.push(minus{})
+	case float64:
+		t.push(minus{})
+	default:
+		t.push(unaryMinus{})
+	}
 	return startState
 }
 
@@ -161,15 +163,15 @@ func multiplyState(t *Tokenizer) stateFunc {
 // 	return startState
 // }
 
-// func leftParenthesisState(t *Tokenizer) stateFunc {
-// 	t.push(LeftParenthesis{})
-// 	return startState
-// }
-//
-// func rightParenthesisState(t *Tokenizer) stateFunc {
-// 	t.push(RightParenthesis{})
-// 	return startState
-// }
+func leftParenthesisState(t *Tokenizer) stateFunc {
+	t.push(leftParenthesis{})
+	return startState
+}
+
+func rightParenthesisState(t *Tokenizer) stateFunc {
+	t.push(rightParenthesis{})
+	return startState
+}
 
 // func commaState(t *Tokenizer) stateFunc {
 // 	t.push(Comma{})
@@ -304,9 +306,10 @@ func alphaNumState(t *Tokenizer) stateFunc {
 		// 		fallthrough
 		// 	case isDoubleQuote(r):
 		// 		fallthrough
-		// 	case isRightParenthesis(r):
-		// 		fallthrough
-		// 	case isLeftParenthesis(r):
+	case isrightParenthesis(r):
+		fallthrough
+	case isleftParenthesis(r):
+		fallthrough
 	case isMinus(r):
 		t.unread()
 		token, err := parse(t.payload)
@@ -331,11 +334,11 @@ func isAlphaNum(r rune) bool {
 	return unicode.IsDigit(r) || unicode.IsLetter(r) || r == '_' || r == '.'
 }
 
-func isLeftParenthesis(r rune) bool {
+func isleftParenthesis(r rune) bool {
 	return r == '('
 }
 
-func isRightParenthesis(r rune) bool {
+func isrightParenthesis(r rune) bool {
 	return r == ')'
 }
 

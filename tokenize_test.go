@@ -57,6 +57,11 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{3.0, multiply{}, 5.0},
 			err: false,
 		},
+		{
+			in:  "- 4",
+			out: []interface{}{unaryMinus{}, 4.0},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)

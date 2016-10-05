@@ -52,6 +52,16 @@ func TestShuntingYard(t *testing.T) {
 			out: []interface{}{1, 2, 3, multiply{}, minus{}, 4, minus{}},
 			err: false,
 		},
+		{
+			in:  []interface{}{unaryMinus{}, 1},
+			out: []interface{}{1, unaryMinus{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{unaryMinus{}, 1, multiply{}, 2},
+			out: []interface{}{1, unaryMinus{}, 2, multiply{}},
+			err: false,
+		},
 	} {
 		out, err := ShuntingYard(c.in)
 		if (err != nil) != c.err {

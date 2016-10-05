@@ -23,3 +23,22 @@ func (o minus) solve(st *stack) (interface{}, error) {
 
 	return left - right, nil
 }
+
+type unaryMinus struct{}
+
+func (o unaryMinus) String() string {
+	return "-"
+}
+
+func (o unaryMinus) precedence() uint8 {
+	return 4
+}
+
+func (o unaryMinus) solve(st *stack) (interface{}, error) {
+	right, err := st.popFloat()
+	if err != nil {
+		return nil, rightError(o)
+	}
+
+	return -right, nil
+}

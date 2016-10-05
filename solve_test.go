@@ -57,6 +57,16 @@ func TestSolve(t *testing.T) {
 			out: -9.0,
 			err: false,
 		},
+		{
+			in:  []interface{}{unaryMinus{}},
+			out: nil,
+			err: true,
+		},
+		{
+			in:  []interface{}{1.0, unaryMinus{}},
+			out: -1.0,
+			err: false,
+		},
 	} {
 
 		out, err := Solve(c.in)
