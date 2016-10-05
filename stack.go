@@ -23,93 +23,46 @@ func (s *stack) push(v interface{}) {
 	s.values = append(s.values, v)
 }
 
-type OperandStack struct {
-	stack
+func (s *stack) inc() {
+	v, _ := s.popInt()
+	s.push(v + 1)
 }
 
-func (s *OperandStack) Pop() (Operand, bool) {
-	v, ok := s.stack.pop()
-	if !ok {
-		return nil, false
-	}
-	return v.(Operand), true
-}
-
-func (s *OperandStack) Push(v Operand) {
-	s.stack.push(v)
-}
-
-func (s *OperandStack) PopInt() (int, error) {
-	op, ok := s.stack.pop()
-	if !ok {
-		return 0, errors.New("empty stack")
+func (s *stack) slice(size int) ([]interface{}, error) {
+	l := len(s.values)
+	if l < size {
+		return nil, fmt.Errorf("stack too small: %d element required out of %d", size, l)
 	}
 
-	v, ok := op.(Number)
-	if !ok {
-		return 0, fmt.Errorf("%s is not a numeric value", op)
-	}
-
-	return int(v), nil
+	out := s.values[l-size:l]
+	s.values = s.values[:l-size]
+	return out, nil
 }
 
-func (s *OperandStack) PopFloat() (float64, error) {
-	op, ok := s.stack.pop()
+func (s *stack) popFloat() (float64, error) {
+	v, ok := s.pop()
 	if !ok {
 		return 0, errors.New("empty stack")
 	}
 
-	v, ok := op.(Number)
+	f, ok := v.(float64)
 	if !ok {
-		return 0, fmt.Errorf("%s is not a numeric value", op)
+		return 0, fmt.Errorf("expected float, having %v (%T)", v, v)
 	}
 
-	return float64(v), nil
+	return f, nil
 }
 
-func (s *OperandStack) PopBool() (bool, error) {
-	op, ok := s.stack.pop()
+func (s *stack) popInt() (int, error) {
+	v, ok := s.pop()
 	if !ok {
-		return false, errors.New("empty stack")
+		return 0, errors.New("empty stack")
 	}
 
-	v, ok := op.(Boolean)
+	i, ok := v.(int)
 	if !ok {
-		return false, fmt.Errorf("%s is not a boolean", op)
+		return 0, fmt.Errorf("expected int, having %v (%T)", v, v)
 	}
 
-	return bool(v), nil
-}
-
-type OperatorStack struct {
-	stack
-}
-
-func (s *OperatorStack) Pop() (Operator, bool) {
-	v, ok := s.stack.pop()
-	if !ok {
-		return nil, false
-	}
-	return v.(Operator), true
-}
-
-func (s *OperatorStack) Push(v Operator) {
-	s.stack.push(v)
-}
-
-type ArityStack struct {
-	stack
-}
-
-func (s *ArityStack) Pop() int {
-	v, _ := s.stack.pop()
-	return v.(int)
-}
-
-func (s *ArityStack) Push(v int) {
-	s.stack.push(v)
-}
-
-func (s *ArityStack) Inc() {
-	s.stack.push(s.Pop() + 1)
+	return i, nil
 }

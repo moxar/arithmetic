@@ -2,14 +2,13 @@ package arithmetic
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
-func Tokenize(input string) ([]Token, error) {
+func Tokenize(input string) ([]interface{}, error) {
 
 	t := &Tokenizer{
 		reader: bufio.NewReader(strings.NewReader(input)),
@@ -26,15 +25,17 @@ func Tokenize(input string) ([]Token, error) {
 	return t.output, nil
 }
 
+type stateFunc func(t *Tokenizer) stateFunc
+
 type Tokenizer struct {
 	reader  *bufio.Reader
 	payload string
-	prev    Token
-	output  []Token
+	prev    interface{}
+	output  []interface{}
 	err     error
 }
 
-func (t *Tokenizer) push(token Token) {
+func (t *Tokenizer) push(token interface{}) {
 	t.prev = token
 	t.output = append(t.output, token)
 }
@@ -65,47 +66,47 @@ func startState(t *Tokenizer) stateFunc {
 	case isSpace(r):
 		return startState
 
-	case isPlus(r):
-		return plusState
-
+		// 	case isPlus(r):
+		// 		return plusState
+		//
 	case isMinus(r):
 		return minusState
 
-	case isDivide(r):
-		return divideState
-
-	case isMultiply(r):
-		return multiplyState
-
-	case isModulo(r):
-		return moduloState
-
-	case isExponant(r):
-		return exponantState
-
-	case isLeftParenthesis(r):
-		return leftParenthesisState
-
-	case isRightParenthesis(r):
-		return rightParenthesisState
-
-	case isComma(r):
-		return commaState
-
-	case isEqual(r):
-		return equalState
-
-	case isGreater(r):
-		return greaterState
-
-	case isDoubleQuote(r):
-		return doubleQuoteState
-
-	case isLower(r):
-		return lowerState
-
-	case isExclamation(r):
-		return exclamationState
+		// 	case isDivide(r):
+		// 		return divideState
+		//
+		// 	case isMultiply(r):
+		// 		return multiplyState
+		//
+		// 	case isModulo(r):
+		// 		return moduloState
+		//
+		// 	case isExponant(r):
+		// 		return exponantState
+		//
+		// 	case isLeftParenthesis(r):
+		// 		return leftParenthesisState
+		//
+		// 	case isRightParenthesis(r):
+		// 		return rightParenthesisState
+		//
+		// 	case isComma(r):
+		// 		return commaState
+		//
+		// 	case isEqual(r):
+		// 		return equalState
+		//
+		// 	case isGreater(r):
+		// 		return greaterState
+		//
+		// 	case isDoubleQuote(r):
+		// 		return doubleQuoteState
+		//
+		// 	case isLower(r):
+		// 		return lowerState
+		//
+		// 	case isExclamation(r):
+		// 		return exclamationState
 
 	case isAlphaNum(r):
 		t.payload += string(r)
@@ -117,156 +118,150 @@ func startState(t *Tokenizer) stateFunc {
 	}
 }
 
-func plusState(t *Tokenizer) stateFunc {
-	if t.prev == nil {
-		t.push(UnaryPlus{})
-		return startState
-	}
-	operand, operator := t.prev.Value()
-	if operand != nil || operator.Kind() == KindRightParenthesis {
-		t.push(Plus{})
-		return startState
-	}
-	t.push(UnaryPlus{})
-	return startState
-}
+// func plusState(t *Tokenizer) stateFunc {
+//
+// 	if _, ok := t.prev.(RightParenthesis); ok {
+// 		t.push(Plus{})
+// 		return startState
+// 	}
+//
+// 	t.push(UnaryPlus{})
+// 	return startState
+// }
 
 func minusState(t *Tokenizer) stateFunc {
-	if t.prev == nil {
-		t.push(UnaryMinus{})
-		return startState
-	}
-	operand, operator := t.prev.Value()
-	if operand != nil || operator.Kind() == KindRightParenthesis {
+
+// 	if _, ok := t.prev.(RightParenthesis); ok {
 		t.push(Minus{})
-		return startState
-	}
-	t.push(UnaryMinus{})
+// 		return startState
+// 	}
+
+// 	t.push(UnaryMinus{})
 	return startState
 }
 
-func multiplyState(t *Tokenizer) stateFunc {
-	t.push(Multiply{})
-	return startState
-}
+// func multiplyState(t *Tokenizer) stateFunc {
+// 	t.push(Multiply{})
+// 	return startState
+// }
+//
+// func exponantState(t *Tokenizer) stateFunc {
+// 	t.push(Exponant{})
+// 	return startState
+// }
+//
+// func divideState(t *Tokenizer) stateFunc {
+// 	t.push(Divide{})
+// 	return startState
+// }
+//
+// func moduloState(t *Tokenizer) stateFunc {
+// 	t.push(Modulo{})
+// 	return startState
+// }
 
-func exponantState(t *Tokenizer) stateFunc {
-	t.push(Exponant{})
-	return startState
-}
+// func leftParenthesisState(t *Tokenizer) stateFunc {
+// 	t.push(LeftParenthesis{})
+// 	return startState
+// }
+//
+// func rightParenthesisState(t *Tokenizer) stateFunc {
+// 	t.push(RightParenthesis{})
+// 	return startState
+// }
 
-func divideState(t *Tokenizer) stateFunc {
-	t.push(Divide{})
-	return startState
-}
+// func commaState(t *Tokenizer) stateFunc {
+// 	t.push(Comma{})
+// 	return startState
+// }
 
-func moduloState(t *Tokenizer) stateFunc {
-	t.push(Modulo{})
-	return startState
-}
-
-func leftParenthesisState(t *Tokenizer) stateFunc {
-	t.push(LeftParenthesis{})
-	return startState
-}
-
-func rightParenthesisState(t *Tokenizer) stateFunc {
-	t.push(RightParenthesis{})
-	return startState
-}
-
-func commaState(t *Tokenizer) stateFunc {
-	t.push(Comma{})
-	return startState
-}
-
-func equalState(t *Tokenizer) stateFunc {
-
-	r, ok := t.read()
-	if !ok {
-		t.err = errors.New("unrecognized token \"=\"")
-		return nil
-	}
-
-	if !isEqual(r) {
-		t.err = fmt.Errorf("unrecognized token \"=%s\"", string(r))
-		return nil
-	}
-
-	t.push(Equal{})
-	return startState
-}
-
-func greaterState(t *Tokenizer) stateFunc {
-
-	r, ok := t.read()
-	if !ok {
-		t.err = errors.New("unrecognized token \">\"")
-		return nil
-	}
-
-	if isEqual(r) {
-		t.push(GreaterEqual{})
-		return startState
-	}
-	t.unread()
-
-	t.push(Greater{})
-	return startState
-}
-
-func lowerState(t *Tokenizer) stateFunc {
-
-	r, ok := t.read()
-	if !ok {
-		t.err = errors.New("unrecognized token \"<\"")
-		return nil
-	}
-
-	if isEqual(r) {
-		t.push(LowerEqual{})
-		return startState
-	}
-	t.unread()
-
-	t.push(Lower{})
-	return startState
-}
-
-func exclamationState(t *Tokenizer) stateFunc {
-
-	r, ok := t.read()
-	if !ok {
-		t.err = errors.New("unrecognized token \"!\"")
-		return nil
-	}
-
-	if !isEqual(r) {
-		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
-		return nil
-	}
-
-	t.push(Different{})
-	return startState
-}
-
-func doubleQuoteState(t *Tokenizer) stateFunc {
-
-	for {
-		r, ok := t.read()
-		if !ok {
-			t.err = fmt.Errorf("expecting \" at end of string: %s", t.payload)
-			return nil
-		}
-
-		if isDoubleQuote(r) {
-			t.push(String(t.payload))
-			return startState
-		}
-
-		t.payload += string(r)
-	}
-}
+// func equalState(t *Tokenizer) stateFunc {
+//
+// 	r, ok := t.read()
+// 	if !ok {
+// 		t.err = errors.New("unrecognized token \"=\"")
+// 		return nil
+// 	}
+//
+// 	if !isEqual(r) {
+// 		t.err = fmt.Errorf("unrecognized token \"=%s\"", string(r))
+// 		return nil
+// 	}
+//
+// 	t.push(Equal{})
+// 	return startState
+// }
+//
+// func greaterState(t *Tokenizer) stateFunc {
+//
+// 	r, ok := t.read()
+// 	if !ok {
+// 		t.err = errors.New("unrecognized token \">\"")
+// 		return nil
+// 	}
+//
+// 	if isEqual(r) {
+// 		t.push(GreaterEqual{})
+// 		return startState
+// 	}
+// 	t.unread()
+//
+// 	t.push(Greater{})
+// 	return startState
+// }
+//
+// func lowerState(t *Tokenizer) stateFunc {
+//
+// 	r, ok := t.read()
+// 	if !ok {
+// 		t.err = errors.New("unrecognized token \"<\"")
+// 		return nil
+// 	}
+//
+// 	if isEqual(r) {
+// 		t.push(LowerEqual{})
+// 		return startState
+// 	}
+// 	t.unread()
+//
+// 	t.push(Lower{})
+// 	return startState
+// }
+//
+// func exclamationState(t *Tokenizer) stateFunc {
+//
+// 	r, ok := t.read()
+// 	if !ok {
+// 		t.err = errors.New("unrecognized token \"!\"")
+// 		return nil
+// 	}
+//
+// 	if !isEqual(r) {
+// 		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
+// 		return nil
+// 	}
+//
+// 	t.push(Different{})
+// 	return startState
+// }
+//
+// func doubleQuoteState(t *Tokenizer) stateFunc {
+//
+// 	for {
+// 		r, ok := t.read()
+// 		if !ok {
+// 			t.err = fmt.Errorf("expecting \" at end of string: %s", t.payload)
+// 			return nil
+// 		}
+//
+// 		if isDoubleQuote(r) {
+// 			t.push(t.payload)
+// 			return startState
+// 		}
+//
+// 		t.payload += string(r)
+// 	}
+// }
 
 func alphaNumState(t *Tokenizer) stateFunc {
 
@@ -284,34 +279,34 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	switch {
 
 	case isSpace(r):
-		fallthrough
-	case isComma(r):
-		fallthrough
-	case isPlus(r):
+// 		fallthrough
+		// 	case isComma(r):
+		// 		fallthrough
+		// 	case isPlus(r):
+		// 		fallthrough
+		// 	case isMultiply(r):
+		// 		fallthrough
+		// 	case isDivide(r):
+		// 		fallthrough
+		// 	case isModulo(r):
+		// 		fallthrough
+		// 	case isExponant(r):
+		// 		fallthrough
+		// 	case isEqual(r):
+		// 		fallthrough
+		// 	case isGreater(r):
+		// 		fallthrough
+		// 	case isLower(r):
+		// 		fallthrough
+		// 	case isExclamation(r):
+		// 		fallthrough
+		// 	case isDoubleQuote(r):
+		// 		fallthrough
+		// 	case isRightParenthesis(r):
+		// 		fallthrough
+		// 	case isLeftParenthesis(r):
 		fallthrough
 	case isMinus(r):
-		fallthrough
-	case isMultiply(r):
-		fallthrough
-	case isDivide(r):
-		fallthrough
-	case isModulo(r):
-		fallthrough
-	case isExponant(r):
-		fallthrough
-	case isRightParenthesis(r):
-		fallthrough
-	case isEqual(r):
-		fallthrough
-	case isGreater(r):
-		fallthrough
-	case isLower(r):
-		fallthrough
-	case isExclamation(r):
-		fallthrough
-	case isDoubleQuote(r):
-		fallthrough
-	case isLeftParenthesis(r):
 		t.unread()
 		token, err := parse(t.payload)
 		if err != nil {
@@ -396,31 +391,31 @@ func isSpace(r rune) bool {
 	return unicode.IsSpace(r)
 }
 
-func parse(input string) (Token, error) {
+func parse(input string) (interface{}, error) {
 
 	input = strings.ToLower(input)
 
-	variable, ok := variables[input]
-	if ok {
-		return variable, nil
-	}
+	// 	variable, ok := variables[input]
+	// 	if ok {
+	// 		return variable, nil
+	// 	}
 
-	function, ok := functions[input]
-	if ok {
-		return function, nil
-	}
+	// 	function, ok := functions[input]
+	// 	if ok {
+	// 		return function, nil
+	// 	}
 
-	for _, exp := range expressions {
-		op, ok := exp(input)
-		if ok {
-			return op, nil
-		}
-	}
+	// 	for _, exp := range expressions {
+	// 		op, ok := exp(input)
+	// 		if ok {
+	// 			return op, nil
+	// 		}
+	// 	}
 
 	f, err := strconv.ParseFloat(input, 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid numeric value: %s", input)
 	}
 
-	return Number(f), nil
+	return f, nil
 }

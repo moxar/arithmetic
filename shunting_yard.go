@@ -1,120 +1,109 @@
 package arithmetic
 
-import (
-	"fmt"
-)
+func ShuntingYard(input []interface{}) ([]interface{}, error) {
 
-func ShuntingYard(input []Token) ([]Token, error) {
+	os := &stack{}
+// 	as := &stack{}
+	var output []interface{}
 
-	st := &OperatorStack{}
-	as := &ArityStack{}
-	var output []Token
+	for _, token := range input {
 
-	for i, t := range input {
+		switch v := token.(type) {
 
-		_, op := t.Value()
+		// 		case Function:
+		// 			as.push(1)
+		// 			os.push(v)
 
-		if op == nil {
-			output = append(output, t)
-			continue
-		}
-
-		if op.Kind() == KindFunction {
-			as.Push(1)
-			st.Push(op)
-			continue
-		}
-
-		if op.Kind() == KindLeftParenthesis {
-			st.Push(op)
-			continue
-		}
-
-		if op.Kind() == KindOperation {
+		case operator:
 			for {
-				v, ok := st.Pop()
+				v, ok := os.pop()
 				if !ok {
 					break
 				}
 
-				if v.Precedence() > op.Precedence() {
-					if v.Kind() == KindFunction {
-						output = append(output, Number(as.Pop()))
-					}
-					output = append(output, v.(Token))
+				// 				if v, ok := v.(function); ok {
+				// 					output = append(output, as.pop())
+				// 					output = append(output, v)
+				// 					continue
+				// 				}
+
+				if _, ok := v.(operator); ok {
+					output = append(output, v)
 					continue
 				}
 
-				st.Push(v)
+				os.push(v)
 				break
 			}
+			os.push(v)
 
-			st.Push(op)
-			continue
-		}
+			// 		case LeftParenthesis:
+			// 			os.push(v)
 
-		if op.Kind() == KindComma {
-			as.Inc()
-			for {
-				v, ok := st.Pop()
-				if !ok {
-					return nil, fmt.Errorf("invalid expression at position %d: %s...", i+1, tokensToString(input[:i+1]))
-				}
+			// 		case RightParethesis:
+			// 			for {
+			// 				v, ok := os.pop()
+			// 				if !ok {
+			// 					return nil, fmt.Errorf("invalid expression at position %d: %v...", i+1, input[:i+1])
+			// 				}
+			//
+			// 				if v, ok := v.(LeftParenthesis); ok {
+			// 					v, ok := os.pop()
+			// 					if !ok {
+			// 						break
+			// 					}
+			//
+			// 					if v, ok := v.(function); ok {
+			// 						output = append(output, as.pop(), v)
+			// 						break
+			// 					}
+			//
+			// 					os.push(v)
+			// 					break
+			// 				}
+			//
+			// 				output = append(output, v)
+			// 			}
 
-				if v.Kind() == KindLeftParenthesis {
-					st.Push(v)
-					break
-				}
+			// 		case Comma:
+			// 			as.Inc()
+			// 			for {
+			// 				v, ok := os.pop()
+			// 				if !ok {
+			// 					return nil, fmt.Errorf("invalid expression at position %d: %v...", i+1, input[:i+1])
+			// 				}
+			//
+			// 				if v, ok := v.(LeftParenthesis); ok {
+			// 					os.push(v)
+			// 					break
+			// 				}
+			//
+			// 				if v, ok := v.(function); ok {
+			// 					output = append(output, as.pop())
+			// 				}
+			// 				output = append(output, v)
+			// 			}
 
-				if v.Kind() == KindFunction {
-					output = append(output, Number(as.Pop()))
-				}
-				output = append(output, v.(Token))
-			}
-			continue
-		}
-
-		if op.Kind() == KindRightParenthesis {
-			for {
-				v, ok := st.Pop()
-				if !ok {
-					return nil, fmt.Errorf("invalid expression at position %d: %s...", i+1, tokensToString(input[:i+1]))
-				}
-
-				if v.Kind() == KindLeftParenthesis {
-
-					v, ok := st.Pop()
-					if !ok {
-						break
-					}
-
-					if v.Kind() == KindFunction {
-						output = append(output, Number(as.Pop()), v.(Token))
-						break
-					}
-
-					st.Push(v)
-					break
-				}
-				output = append(output, v.(Token))
-			}
-			continue
+		default:
+			output = append(output, v)
 		}
 	}
 
 	for {
 
-		v, ok := st.Pop()
+		v, ok := os.pop()
 		if !ok {
 			break
 		}
-		if v.Kind() == KindLeftParenthesis {
-			return nil, fmt.Errorf("mismatched parenthesis: %s", tokensToString(input))
-		}
-		if v.Kind() == KindFunction {
-			output = append(output, Number(as.Pop()))
-		}
-		output = append(output, v.(Token))
+
+		// 		if v, ok := v.(LeftParenthesis); ok {
+		// 			return nil, fmt.Errorf("mismatched parenthesis: %v", input)
+		// 		}
+
+		// 		if v, ok := v.(function); ok {
+		// 			output = append(output, as.pop())
+		// 		}
+		output = append(output, v)
 	}
 
 	return output, nil
