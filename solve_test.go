@@ -98,6 +98,26 @@ func TestSolve(t *testing.T) {
 			out: 1.0,
 			err: false,
 		},
+		{
+			in:  []interface{}{2.0, 2.0, greater{}},
+			out: false,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, equal{}},
+			out: true,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, greaterEqual{}},
+			out: true,
+			err: false,
+		},
+		{
+			in:  []interface{}{"bob", 2.0, greaterEqual{}},
+			out: nil,
+			err: true,
+		},
 	} {
 
 		out, err := Solve(c.in)

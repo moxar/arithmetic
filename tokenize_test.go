@@ -114,6 +114,21 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{f("if"), leftParenthesis{}, variable{"true", true}, comma{}, 1.0, comma{}, 0.0, rightParenthesis{}},
 			err: false,
 		},
+		{
+			in:  "1 == 2",
+			out: []interface{}{1.0, equal{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 >= 2",
+			out: []interface{}{1.0, greaterEqual{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 > 2",
+			out: []interface{}{1.0, greater{}, 2.0},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)

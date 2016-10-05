@@ -2,6 +2,7 @@ package arithmetic
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -92,13 +93,13 @@ func startState(t *Tokenizer) stateFunc {
 
 	case isComma(r):
 		return commaState
-		//
-		// 	case isEqual(r):
-		// 		return equalState
-		//
-		// 	case isGreater(r):
-		// 		return greaterState
-		//
+
+	case isEqual(r):
+		return equalState
+
+	case isGreater(r):
+		return greaterState
+
 	case isDoubleQuote(r):
 		return doubleQuoteState
 		//
@@ -178,40 +179,41 @@ func commaState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-// func equalState(t *Tokenizer) stateFunc {
-//
-// 	r, ok := t.read()
-// 	if !ok {
-// 		t.err = errors.New("unrecognized token \"=\"")
-// 		return nil
-// 	}
-//
-// 	if !isEqual(r) {
-// 		t.err = fmt.Errorf("unrecognized token \"=%s\"", string(r))
-// 		return nil
-// 	}
-//
-// 	t.push(Equal{})
-// 	return startState
-// }
-//
-// func greaterState(t *Tokenizer) stateFunc {
-//
-// 	r, ok := t.read()
-// 	if !ok {
-// 		t.err = errors.New("unrecognized token \">\"")
-// 		return nil
-// 	}
-//
-// 	if isEqual(r) {
-// 		t.push(GreaterEqual{})
-// 		return startState
-// 	}
-// 	t.unread()
-//
-// 	t.push(Greater{})
-// 	return startState
-// }
+func equalState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"=\"")
+		return nil
+	}
+
+	if !isEqual(r) {
+		t.err = fmt.Errorf("unrecognized token \"=%s\"", string(r))
+		return nil
+	}
+
+	t.push(equal{})
+	return startState
+}
+
+func greaterState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \">\"")
+		return nil
+	}
+
+	if isEqual(r) {
+		t.push(greaterEqual{})
+		return startState
+	}
+	t.unread()
+
+	t.push(greater{})
+	return startState
+}
+
 //
 // func lowerState(t *Tokenizer) stateFunc {
 //
@@ -296,10 +298,10 @@ func alphaNumState(t *Tokenizer) stateFunc {
 		// 		fallthrough
 		// 	case isExponant(r):
 		// 		fallthrough
-		// 	case isEqual(r):
-		// 		fallthrough
-		// 	case isGreater(r):
-		// 		fallthrough
+	case isEqual(r):
+		fallthrough
+	case isGreater(r):
+		fallthrough
 		// 	case isLower(r):
 		// 		fallthrough
 		// 	case isExclamation(r):

@@ -12,28 +12,40 @@ func rightError(o fmt.Stringer) error {
 	return fmt.Errorf("invalid operation: \"%s\" must be followed by a valid operand or expression", o)
 }
 
-// func equals(o1, o2 Operand) (bool, bool) {
-//
-// 	// Compare floats.
-// 	left, errLeft := ToFloat(o1)
-// 	right, errRight := ToFloat(o2)
-// 	if errLeft == nil {
-// 		if errRight == nil {
-// 			return left == right, true
-// 		}
-// 	}
-// 	return false, false
-// }
-//
-// func greater(o1, o2 Operand) (bool, bool) {
-//
-// 	// Compare floats.
-// 	left, errLeft := ToFloat(o1)
-// 	right, errRight := ToFloat(o2)
-// 	if errLeft == nil {
-// 		if errRight == nil {
-// 			return left > right, true
-// 		}
-// 	}
-// 	return false, false
-// }
+func invalidExpressionError(o fmt.Stringer, left, right interface{}) error {
+	return fmt.Errorf("invalid expression %v %s %v", left, o, right)
+}
+
+func eq(o1, o2 interface{}) (bool, bool) {
+
+	// Compare floats.
+	f1, ok1 := o1.(float64)
+	f2, ok2 := o2.(float64)
+	if ok1 != ok2 {
+		return false, false
+	}
+	if ok1 {
+		return f1 == f2, true
+	}
+
+	// Compare other types...
+
+	return false, false
+}
+
+func gt(o1, o2 interface{}) (bool, bool) {
+
+	// Compare floats.
+	f1, ok1 := o1.(float64)
+	f2, ok2 := o2.(float64)
+	if ok1 != ok2 {
+		return false, false
+	}
+	if ok1 {
+		return f1 > f2, true
+	}
+
+	// Compare other types...
+
+	return false, false
+}
