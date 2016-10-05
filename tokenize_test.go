@@ -109,6 +109,11 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{variable{"xxx", "3x"}},
 			err: false,
 		},
+		{
+			in:  "if(true, 1, 0)",
+			out: []interface{}{f("if"), leftParenthesis{}, variable{"true", true}, comma{}, 1.0, comma{}, 0.0, rightParenthesis{}},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)

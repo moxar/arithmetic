@@ -93,6 +93,11 @@ func TestSolve(t *testing.T) {
 			out: nil,
 			err: true,
 		},
+		{
+			in:  []interface{}{true, 1.0, 0.0, 3, function{"if", If}},
+			out: 1.0,
+			err: false,
+		},
 	} {
 
 		out, err := Solve(c.in)

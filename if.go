@@ -1,39 +1,30 @@
 package arithmetic
 
-// import (
-// 	"errors"
-// 	"fmt"
-// )
-//
-// func init() {
-// 	RegisterFunction("if", If)
-// }
-//
-// func If(st *OperandStack) (Operand, error) {
-//
-// 	_, err := st.PopInt()
-// 	if err != nil {
-// 		return nil, fmt.Errorf("if error: undefined argument len: %s", err)
-// 	}
-//
-// 	fail, ok := st.Pop()
-// 	if !ok {
-// 		return nil, errors.New("if error: third argument must be operand, none found")
-// 	}
-//
-// 	success, ok := st.Pop()
-// 	if !ok {
-// 		return nil, errors.New("if error: second argument must be operand, none found")
-// 	}
-//
-// 	cond, err := st.PopBool()
-// 	if err != nil {
-// 		return nil, fmt.Errorf("if error: first argument must be bool: %s", err)
-// 	}
-//
-// 	if cond {
-// 		return success, nil
-// 	}
-//
-// 	return fail, nil
-// }
+import (
+	"fmt"
+)
+
+func init() {
+	RegisterFunction("if", If)
+}
+
+func If(args ...interface{}) (interface{}, error) {
+
+	if len(args) != 3 {
+		return nil, fmt.Errorf("if requires 3 arguments, %d provided", len(args))
+	}
+
+	cond, ok := args[0].(bool)
+	if !ok {
+		return nil, fmt.Errorf("invalid expression: if(%v, %v, %v)", args[0], args[1], args[2])
+	}
+
+	success := args[1]
+	fail := args[2]
+
+	if cond {
+		return success, nil
+	}
+
+	return fail, nil
+}

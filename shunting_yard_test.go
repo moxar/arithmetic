@@ -98,6 +98,11 @@ func TestShuntingYard(t *testing.T) {
 			out: []interface{}{"random", "string"},
 			err: false,
 		},
+		{
+			in:  []interface{}{f("if"), leftParenthesis{}, true, comma{}, 1.0, comma{}, 0.0, rightParenthesis{}},
+			out: []interface{}{true, 1.0, 0.0, 3, f("if")},
+			err: false,
+		},
 	} {
 		out, err := ShuntingYard(c.in)
 		if (err != nil) != c.err {
