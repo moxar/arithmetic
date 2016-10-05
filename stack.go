@@ -34,7 +34,7 @@ func (s *stack) slice(size int) ([]interface{}, error) {
 		return nil, fmt.Errorf("stack too small: %d element required out of %d", size, l)
 	}
 
-	out := s.values[l-size:l]
+	out := s.values[l-size : l]
 	s.values = s.values[:l-size]
 	return out, nil
 }

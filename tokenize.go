@@ -131,12 +131,12 @@ func startState(t *Tokenizer) stateFunc {
 
 func minusState(t *Tokenizer) stateFunc {
 
-// 	if _, ok := t.prev.(RightParenthesis); ok {
-		t.push(Minus{})
-// 		return startState
-// 	}
+	// 	if _, ok := t.prev.(RightParenthesis); ok {
+	t.push(minus{})
+	// 		return startState
+	// 	}
 
-// 	t.push(UnaryMinus{})
+	// 	t.push(UnaryMinus{})
 	return startState
 }
 
@@ -279,7 +279,7 @@ func alphaNumState(t *Tokenizer) stateFunc {
 	switch {
 
 	case isSpace(r):
-// 		fallthrough
+		// 		fallthrough
 		// 	case isComma(r):
 		// 		fallthrough
 		// 	case isPlus(r):

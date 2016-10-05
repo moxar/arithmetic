@@ -1,9 +1,5 @@
 package arithmetic
 
-import (
-	"errors"
-)
-
 func Solve(input []interface{}) (interface{}, error) {
 	st := &stack{}
 
@@ -40,15 +36,6 @@ func Solve(input []interface{}) (interface{}, error) {
 		}
 	}
 
-	out, ok := st.pop()
-	if !ok {
-		return nil, errors.New("empty postfix input")
-	}
-
-	_, ok = st.pop()
-	if ok {
-		return nil, errors.New("missing operand in postfix input")
-	}
-
+	out, _ := st.pop()
 	return out, nil
 }

@@ -3,7 +3,7 @@ package arithmetic
 func ShuntingYard(input []interface{}) ([]interface{}, error) {
 
 	os := &stack{}
-// 	as := &stack{}
+	// 	as := &stack{}
 	var output []interface{}
 
 	for _, token := range input {

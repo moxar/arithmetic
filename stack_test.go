@@ -1,6 +1,6 @@
 package arithmetic
 
-import(
+import (
 	"reflect"
 	"testing"
 )
@@ -53,7 +53,7 @@ func TestStack_slice(t *testing.T) {
 		t.Log("unexpected error, having", err)
 		t.Fail()
 	}
-	
+
 	if !reflect.DeepEqual(st.values, []interface{}{4, 5, 6}) {
 		t.Logf("invalid stack values: %v\n", st.values)
 		t.Fail()
@@ -62,7 +62,7 @@ func TestStack_slice(t *testing.T) {
 		t.Logf("invalid output values: %v\n", out)
 		t.Fail()
 	}
-	
+
 	_, err = st.slice(10)
 	if err == nil {
 		t.Log("expecting error, having none")
@@ -81,13 +81,13 @@ func TestStack_popFloat(t *testing.T) {
 		t.Log("unexpected output:", out)
 		t.Fail()
 	}
-	
+
 	out, err = st.popFloat()
 	if err == nil {
 		t.Log("expected error, having none")
 		t.Fail()
 	}
-	
+
 	st.values = []interface{}{1}
 	out, err = st.popFloat()
 	if err == nil {
@@ -107,13 +107,13 @@ func TestStack_popInt(t *testing.T) {
 		t.Log("unexpected output:", out)
 		t.Fail()
 	}
-	
+
 	out, err = st.popInt()
 	if err == nil {
 		t.Log("expected error, having none")
 		t.Fail()
 	}
-	
+
 	st.values = []interface{}{1.0}
 	out, err = st.popInt()
 	if err == nil {
