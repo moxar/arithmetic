@@ -398,10 +398,10 @@ func parse(input string) (interface{}, error) {
 
 	input = strings.ToLower(input)
 
-	// 	variable, ok := variables[input]
-	// 	if ok {
-	// 		return variable, nil
-	// 	}
+	variable, ok := variables[input]
+	if ok {
+		return variable, nil
+	}
 
 	// 	function, ok := functions[input]
 	// 	if ok {

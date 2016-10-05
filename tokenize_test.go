@@ -1,6 +1,7 @@
 package arithmetic
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -70,6 +71,11 @@ func TestTokenize(t *testing.T) {
 		{
 			in:  "2*(-3-5)",
 			out: []interface{}{2.0, multiply{}, leftParenthesis{}, unaryMinus{}, 3.0, minus{}, 5.0, rightParenthesis{}},
+			err: false,
+		},
+		{
+			in:  "2 * e",
+			out: []interface{}{2.0, multiply{}, variable{"e", math.E}},
 			err: false,
 		},
 	} {

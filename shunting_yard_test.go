@@ -1,6 +1,7 @@
 package arithmetic
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -80,6 +81,11 @@ func TestShuntingYard(t *testing.T) {
 		{
 			in:  []interface{}{leftParenthesis{}, 2.0, rightParenthesis{}},
 			out: []interface{}{2.0},
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, multiply{}, variable{"e", math.E}},
+			out: []interface{}{2.0, variable{"e", math.E}, multiply{}},
 			err: false,
 		},
 	} {

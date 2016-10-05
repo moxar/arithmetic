@@ -1,6 +1,7 @@
 package arithmetic
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -65,6 +66,11 @@ func TestSolve(t *testing.T) {
 		{
 			in:  []interface{}{1.0, unaryMinus{}},
 			out: -1.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, variable{"e", math.E}, multiply{}},
+			out: 2 * math.E,
 			err: false,
 		},
 	} {

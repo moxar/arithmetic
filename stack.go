@@ -45,6 +45,13 @@ func (s *stack) popFloat() (float64, error) {
 		return 0, errors.New("empty stack")
 	}
 
+	if f, ok := v.(variable); ok {
+		f, ok := f.value.(float64)
+		if ok {
+			return f, nil
+		}
+	}
+
 	f, ok := v.(float64)
 	if !ok {
 		return 0, fmt.Errorf("expected float, having %v (%T)", v, v)
@@ -57,6 +64,13 @@ func (s *stack) popInt() (int, error) {
 	v, ok := s.pop()
 	if !ok {
 		return 0, errors.New("empty stack")
+	}
+
+	if i, ok := v.(variable); ok {
+		i, ok := i.value.(int)
+		if ok {
+			return i, nil
+		}
 	}
 
 	i, ok := v.(int)
