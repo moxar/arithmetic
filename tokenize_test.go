@@ -12,6 +12,13 @@ func f(label string) function {
 
 func TestTokenize(t *testing.T) {
 
+	RegisterExpression(func(input string) (interface{}, bool) {
+		if input == "xxx" {
+			return "3x", true
+		}
+		return nil, false
+	})
+
 	for i, c := range []struct {
 		in  string
 		out []interface{}
@@ -95,6 +102,11 @@ func TestTokenize(t *testing.T) {
 		{
 			in:  "\"random string 2\"",
 			out: []interface{}{"random string 2"},
+			err: false,
+		},
+		{
+			in:  "xxx",
+			out: []interface{}{variable{"xxx", "3x"}},
 			err: false,
 		},
 	} {

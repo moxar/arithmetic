@@ -398,9 +398,9 @@ func parse(input string) (interface{}, error) {
 
 	input = strings.ToLower(input)
 
-	variable, ok := variables[input]
+	v, ok := variables[input]
 	if ok {
-		return variable, nil
+		return v, nil
 	}
 
 	function, ok := functions[input]
@@ -408,12 +408,12 @@ func parse(input string) (interface{}, error) {
 		return function, nil
 	}
 
-	// 	for _, exp := range expressions {
-	// 		op, ok := exp(input)
-	// 		if ok {
-	// 			return op, nil
-	// 		}
-	// 	}
+	for _, exp := range expressions {
+		op, ok := exp(input)
+		if ok {
+			return variable{input, op}, nil
+		}
+	}
 
 	f, err := strconv.ParseFloat(input, 64)
 	if err != nil {
