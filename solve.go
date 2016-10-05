@@ -6,23 +6,23 @@ func Solve(input []interface{}) (interface{}, error) {
 	for _, t := range input {
 
 		switch v := t.(type) {
-		// 		case function:
-		// 			size, ok := st.popInt()
-		// 			if !ok {
-		// 				return nil, err
-		// 			}
-		//
-		// 			args, err := st.slice()
-		// 			if err != nil {
-		// 				return nil, err
-		// 			}
-		//
-		// 			o, err := v.solve(args...)
-		// 			if err != nil {
-		// 				return nil, err
-		// 			}
-		//
-		// 			st.Push(o)
+		case function:
+			size, err := st.popInt()
+			if err != nil {
+				return nil, err
+			}
+
+			args, err := st.slice(size)
+			if err != nil {
+				return nil, err
+			}
+
+			o, err := v.solve(args...)
+			if err != nil {
+				return nil, err
+			}
+
+			st.push(o)
 
 		case operator:
 			o, err := v.solve(st)

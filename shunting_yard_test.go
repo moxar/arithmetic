@@ -88,6 +88,11 @@ func TestShuntingYard(t *testing.T) {
 			out: []interface{}{2.0, variable{"e", math.E}, multiply{}},
 			err: false,
 		},
+		{
+			in:  []interface{}{f("max"), leftParenthesis{}, 3.0, comma{}, 1.0, rightParenthesis{}},
+			out: []interface{}{3.0, 1.0, 2, f("max")},
+			err: false,
+		},
 	} {
 		out, err := ShuntingYard(c.in)
 		if (err != nil) != c.err {
@@ -100,8 +105,8 @@ func TestShuntingYard(t *testing.T) {
 
 		if !reflect.DeepEqual(out, c.out) {
 			t.Log("case", i+1, "unexpected output")
-			t.Log("want:", c.out)
-			t.Log("got: ", out)
+			t.Logf("want: %v\n", c.out)
+			t.Logf("got:  %v\n", out)
 			t.Fail()
 		}
 	}

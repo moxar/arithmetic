@@ -73,6 +73,11 @@ func TestSolve(t *testing.T) {
 			out: 2 * math.E,
 			err: false,
 		},
+		{
+			in:  []interface{}{2.0, variable{"e", math.E}, multiply{}, 10.0, 2, function{"max", Max}},
+			out: 10.0,
+			err: false,
+		},
 	} {
 
 		out, err := Solve(c.in)

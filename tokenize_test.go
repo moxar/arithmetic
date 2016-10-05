@@ -6,6 +6,10 @@ import (
 	"testing"
 )
 
+func f(label string) function {
+	return function{label: label}
+}
+
 func TestTokenize(t *testing.T) {
 
 	for i, c := range []struct {
@@ -78,6 +82,11 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{2.0, multiply{}, variable{"e", math.E}},
 			err: false,
 		},
+		{
+			in:  "max(2,e)",
+			out: []interface{}{f("max"), leftParenthesis{}, 2.0, comma{}, variable{"e", math.E}, rightParenthesis{}},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)
@@ -87,6 +96,13 @@ func TestTokenize(t *testing.T) {
 			t.Log("got: ", err)
 			t.Fail()
 			continue
+		}
+
+		for i := range out {
+			if v, ok := out[i].(function); ok {
+				v.solve = nil
+				out[i] = v
+			}
 		}
 
 		if !reflect.DeepEqual(out, c.out) {

@@ -89,9 +89,9 @@ func startState(t *Tokenizer) stateFunc {
 
 	case isrightParenthesis(r):
 		return rightParenthesisState
-		//
-		// 	case isComma(r):
-		// 		return commaState
+
+	case isComma(r):
+		return commaState
 		//
 		// 	case isEqual(r):
 		// 		return equalState
@@ -173,10 +173,10 @@ func rightParenthesisState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-// func commaState(t *Tokenizer) stateFunc {
-// 	t.push(Comma{})
-// 	return startState
-// }
+func commaState(t *Tokenizer) stateFunc {
+	t.push(comma{})
+	return startState
+}
 
 // func equalState(t *Tokenizer) stateFunc {
 //
@@ -283,9 +283,9 @@ func alphaNumState(t *Tokenizer) stateFunc {
 
 	case isSpace(r):
 		fallthrough
-		// 		fallthrough
-		// 	case isComma(r):
-		// 		fallthrough
+
+	case isComma(r):
+		fallthrough
 		// 	case isPlus(r):
 		// 		fallthrough
 	case isMultiply(r):
@@ -403,10 +403,10 @@ func parse(input string) (interface{}, error) {
 		return variable, nil
 	}
 
-	// 	function, ok := functions[input]
-	// 	if ok {
-	// 		return function, nil
-	// 	}
+	function, ok := functions[input]
+	if ok {
+		return function, nil
+	}
 
 	// 	for _, exp := range expressions {
 	// 		op, ok := exp(input)

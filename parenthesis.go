@@ -12,9 +12,8 @@ func (o rightParenthesis) String() string {
 	return ")"
 }
 
-//
-// type Comma struct{}
-//
-// func (o Comma) String() string {
-// 	return ","
-// }
+type comma struct{}
+
+func (o comma) String() string {
+	return ","
+}
