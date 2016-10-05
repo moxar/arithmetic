@@ -1,5 +1,9 @@
 package arithmetic
 
+import (
+	"fmt"
+)
+
 func ShuntingYard(input []interface{}) ([]interface{}, error) {
 
 	os := &stack{}
@@ -23,12 +27,14 @@ func ShuntingYard(input []interface{}) ([]interface{}, error) {
 				}
 
 				if v, ok := v.(operator); ok {
-					if v.precedence() < op.precedence() {
-						os.push(v)
-						break
+					if v.precedence() >= op.precedence() {
+						output = append(output, v)
+						continue
 					}
-					output = append(output, v)
 				}
+
+				os.push(v)
+				break
 
 				// 				if v, ok := v.(function); ok {
 				// 					output = append(output, as.pop())
@@ -39,33 +45,33 @@ func ShuntingYard(input []interface{}) ([]interface{}, error) {
 			}
 			os.push(v)
 
-			// 		case LeftParenthesis:
-			// 			os.push(v)
+		case leftParenthesis:
+			os.push(v)
 
-			// 		case RightParethesis:
-			// 			for {
-			// 				v, ok := os.pop()
-			// 				if !ok {
-			// 					return nil, fmt.Errorf("invalid expression at position %d: %v...", i+1, input[:i+1])
-			// 				}
-			//
-			// 				if v, ok := v.(LeftParenthesis); ok {
-			// 					v, ok := os.pop()
-			// 					if !ok {
-			// 						break
-			// 					}
-			//
-			// 					if v, ok := v.(function); ok {
-			// 						output = append(output, as.pop(), v)
-			// 						break
-			// 					}
-			//
-			// 					os.push(v)
-			// 					break
-			// 				}
-			//
-			// 				output = append(output, v)
-			// 			}
+		case rightParenthesis:
+			for {
+				v, ok := os.pop()
+				if !ok {
+					return nil, fmt.Errorf("invalid expression: %v :%v", input, output)
+				}
+
+				if _, ok := v.(leftParenthesis); ok {
+					v, ok := os.pop()
+					if !ok {
+						break
+					}
+
+					// 						if v, ok := v.(function); ok {
+					// 							output = append(output, as.pop(), v)
+					// 							break
+					// 						}
+
+					os.push(v)
+					break
+				}
+
+				output = append(output, v)
+			}
 
 			// 		case Comma:
 			// 			as.Inc()
@@ -98,9 +104,9 @@ func ShuntingYard(input []interface{}) ([]interface{}, error) {
 			break
 		}
 
-		// 		if v, ok := v.(LeftParenthesis); ok {
-		// 			return nil, fmt.Errorf("mismatched parenthesis: %v", input)
-		// 		}
+		if _, ok := v.(leftParenthesis); ok {
+			return nil, fmt.Errorf("mismatched parenthesis: %v", input)
+		}
 
 		// 		if v, ok := v.(function); ok {
 		// 			output = append(output, as.pop())
