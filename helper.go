@@ -23,7 +23,7 @@ func eq(o1, o2 interface{}) bool {
 	if ok1 && ok2 {
 		return f1 == f2
 	}
-	
+
 	return o1 == o2
 }
 
@@ -33,12 +33,12 @@ func gt(o1, o2 interface{}) (bool, bool) {
 	if !ok {
 		return false, false
 	}
-	
+
 	f2, ok := toFloat(o2)
 	if !ok {
 		return false, false
 	}
-	
+
 	return f1 > f2, true
 }
 
@@ -52,17 +52,17 @@ func floatToInt(o float64) (int, bool) {
 
 func toFloat(val interface{}) (float64, bool) {
 	switch t := val.(type) {
-		
+
 	case float64:
 		return t, true
-		
+
 	case variable:
 		v, ok := t.value.(float64)
 		if !ok {
 			return 0, false
 		}
 		return v, true
-		
+
 	default:
 		return 0, false
 	}
@@ -70,17 +70,17 @@ func toFloat(val interface{}) (float64, bool) {
 
 func toBool(val interface{}) (bool, bool) {
 	switch t := val.(type) {
-		
+
 	case bool:
 		return t, true
-		
+
 	case variable:
 		v, ok := t.value.(bool)
 		if !ok {
 			return false, false
 		}
 		return v, true
-		
+
 	default:
 		return false, false
 	}

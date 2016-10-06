@@ -80,3 +80,24 @@ func (s *stack) popInt() (int, error) {
 
 	return i, nil
 }
+
+func (s *stack) popBool() (bool, error) {
+	v, ok := s.pop()
+	if !ok {
+		return false, errors.New("empty stack")
+	}
+
+	if b, ok := v.(variable); ok {
+		b, ok := b.value.(bool)
+		if ok {
+			return b, nil
+		}
+	}
+
+	b, ok := v.(bool)
+	if !ok {
+		return false, fmt.Errorf("expected boolean, having %v (%T)", v, v)
+	}
+
+	return b, nil
+}

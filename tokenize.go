@@ -106,6 +106,12 @@ func startState(t *tokenizer) stateFunc {
 	case isLower(r):
 		return lowerState
 
+	case isAmpersand(r):
+		return ampersandState
+
+	case isPipe(r):
+		return pipeState
+
 	case isExclamation(r):
 		return exclamationState
 
@@ -114,7 +120,7 @@ func startState(t *tokenizer) stateFunc {
 		return alphaNumState
 
 	default:
-		t.err = fmt.Errorf("unrecognized token: %s", string(r))
+		t.err = fmt.Errorf("unrecognized token: \"%s\"", string(r))
 		return nil
 	}
 }
@@ -243,12 +249,13 @@ func exclamationState(t *tokenizer) stateFunc {
 		return nil
 	}
 
-	if !isEqual(r) {
-		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
-		return nil
+	if isEqual(r) {
+		t.push(different{})
+		return startState
 	}
 
-	t.push(different{})
+	t.unread()
+	t.push(not{})
 	return startState
 }
 
@@ -268,6 +275,40 @@ func doubleQuoteState(t *tokenizer) stateFunc {
 
 		t.payload += string(r)
 	}
+}
+
+func ampersandState(t *tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"&\"")
+		return nil
+	}
+
+	if isAmpersand(r) {
+		t.push(and{})
+		return startState
+	}
+	t.unread()
+	t.err = fmt.Errorf("unrecognized tocken \"&%s\"", rune(r))
+	return nil
+}
+
+func pipeState(t *tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"|\"")
+		return nil
+	}
+
+	if isPipe(r) {
+		t.push(or{})
+		return startState
+	}
+	t.unread()
+	t.err = fmt.Errorf("unrecognized tocken \"|%s\"", rune(r))
+	return nil
 }
 
 func alphaNumState(t *tokenizer) stateFunc {
@@ -310,6 +351,10 @@ func alphaNumState(t *tokenizer) stateFunc {
 		fallthrough
 	case isDoubleQuote(r):
 		fallthrough
+	case isAmpersand(r):
+		fallthrough
+	case isPipe(r):
+		fallthrough
 	case isrightParenthesis(r):
 		fallthrough
 	case isleftParenthesis(r):
@@ -329,7 +374,7 @@ func alphaNumState(t *tokenizer) stateFunc {
 		return alphaNumState
 
 	default:
-		t.err = fmt.Errorf("unrecognized token: %s", string(r))
+		t.err = fmt.Errorf("unrecognized token: \"%s\"", string(r))
 		return nil
 	}
 }
@@ -394,6 +439,14 @@ func isDoubleQuote(r rune) bool {
 	return r == '"'
 }
 
+func isAmpersand(r rune) bool {
+	return r == '&'
+}
+
+func isPipe(r rune) bool {
+	return r == '|'
+}
+
 func isSpace(r rune) bool {
 	return unicode.IsSpace(r)
 }
@@ -410,6 +463,11 @@ func (t *tokenizer) parse(input string) (interface{}, error) {
 	function, ok := functions[input]
 	if ok {
 		return function, nil
+	}
+
+	a, ok := aliases[input]
+	if ok {
+		return a, nil
 	}
 
 	for _, exp := range expressions {

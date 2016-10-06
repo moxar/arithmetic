@@ -51,6 +51,9 @@ The package supports the following operators:
 	* <= (lower or equal)
 	* <  (lower)
 	* != (different)
+	* && (and). Note: "and" is an alias to "&&"
+	* || (or). Note: "or" is an alias to "||"
+	* !  (not). Note: "not" is an alias to "!"
 	
 ### Variables
 
