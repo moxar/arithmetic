@@ -118,6 +118,46 @@ func TestSolve(t *testing.T) {
 			out: nil,
 			err: true,
 		},
+		{
+			in:  []interface{}{2.0, 2.0, plus{}},
+			out: 4.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, unaryPlus{}},
+			out: 2.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, divide{}},
+			out: 1.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2, 2, modulo{}},
+			out: 0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, exponant{}},
+			out: 4.0,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, lower{}},
+			out: false,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, lowerEqual{}},
+			out: true,
+			err: false,
+		},
+		{
+			in:  []interface{}{2.0, 2.0, different{}},
+			out: false,
+			err: false,
+		},
 	} {
 
 		out, err := Solve(c.in)

@@ -1,37 +1,44 @@
 package arithmetic
 
-// import "fmt"
-//
-// type Plus struct{}
-//
-// func (o Plus) String() string {
-// 	return "+"
-// }
-//
-// func (o Plus) Precedence() uint8 {
-// 	return 1
-// }
-//
-// func (o Plus) Solve(st *OperandStack) (Operand, error) {
-// 	right, ok := st.Pop()
-// 	if !ok {
-// 		return nil, fmt.Errorf("invalid operation: \"+\" must be followed by a valid operand or expression")
-// 	}
-//
-// 	r, err := ToFloat(right)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("invalid operand: %s", err)
-// 	}
-//
-// 	left, ok := st.Pop()
-// 	if !ok {
-// 		return nil, fmt.Errorf("invalid operation: \"+ %s\" must be preceeded by a valid operand or expression", right)
-// 	}
-//
-// 	l, err := ToFloat(left)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("invalid operand: %s", err)
-// 	}
-//
-// 	return Number(l + r), nil
-// }
+type plus struct{}
+
+func (o plus) String() string {
+	return "+"
+}
+
+func (o plus) precedence() uint8 {
+	return 1
+}
+
+func (o plus) solve(st *stack) (interface{}, error) {
+	right, err := st.popFloat()
+	if err != nil {
+		return nil, rightError(o)
+	}
+
+	left, err := st.popFloat()
+	if err != nil {
+		return nil, leftError(o, right)
+	}
+
+	return left + right, nil
+}
+
+type unaryPlus struct{}
+
+func (o unaryPlus) String() string {
+	return "+"
+}
+
+func (o unaryPlus) precedence() uint8 {
+	return 4
+}
+
+func (o unaryPlus) solve(st *stack) (interface{}, error) {
+	right, err := st.popFloat()
+	if err != nil {
+		return nil, rightError(o)
+	}
+
+	return right, nil
+}

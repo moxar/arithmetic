@@ -118,6 +118,46 @@ func TestShuntingYard(t *testing.T) {
 			out: []interface{}{1.0, 2.0, greater{}},
 			err: false,
 		},
+		{
+			in:  []interface{}{1.0, plus{}, 2.0},
+			out: []interface{}{1.0, 2.0, plus{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{unaryPlus{}, 2.0},
+			out: []interface{}{2.0, unaryPlus{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, divide{}, 2.0},
+			out: []interface{}{1.0, 2.0, divide{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, modulo{}, 2.0},
+			out: []interface{}{1.0, 2.0, modulo{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, exponant{}, 2.0},
+			out: []interface{}{1.0, 2.0, exponant{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, lower{}, 2.0},
+			out: []interface{}{1.0, 2.0, lower{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, lowerEqual{}, 2.0},
+			out: []interface{}{1.0, 2.0, lowerEqual{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{1.0, different{}, 2.0},
+			out: []interface{}{1.0, 2.0, different{}},
+			err: false,
+		},
 	} {
 		out, err := ShuntingYard(c.in)
 		if (err != nil) != c.err {

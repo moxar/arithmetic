@@ -67,24 +67,24 @@ func startState(t *Tokenizer) stateFunc {
 	case isSpace(r):
 		return startState
 
-		// 	case isPlus(r):
-		// 		return plusState
-		//
+	case isPlus(r):
+		return plusState
+
 	case isMinus(r):
 		return minusState
 
-		// 	case isDivide(r):
-		// 		return divideState
-		//
+	case isDivide(r):
+		return divideState
+
 	case isMultiply(r):
 		return multiplyState
 
-		// 	case isModulo(r):
-		// 		return moduloState
-		//
-		// 	case isExponant(r):
-		// 		return exponantState
-		//
+	case isModulo(r):
+		return moduloState
+
+	case isExponant(r):
+		return exponantState
+
 	case isleftParenthesis(r):
 		return leftParenthesisState
 
@@ -102,12 +102,12 @@ func startState(t *Tokenizer) stateFunc {
 
 	case isDoubleQuote(r):
 		return doubleQuoteState
-		//
-		// 	case isLower(r):
-		// 		return lowerState
-		//
-		// 	case isExclamation(r):
-		// 		return exclamationState
+
+	case isLower(r):
+		return lowerState
+
+	case isExclamation(r):
+		return exclamationState
 
 	case isAlphaNum(r):
 		t.payload += string(r)
@@ -119,16 +119,18 @@ func startState(t *Tokenizer) stateFunc {
 	}
 }
 
-// func plusState(t *Tokenizer) stateFunc {
-//
-// 	if _, ok := t.prev.(rightParenthesis); ok {
-// 		t.push(Plus{})
-// 		return startState
-// 	}
-//
-// 	t.push(UnaryPlus{})
-// 	return startState
-// }
+func plusState(t *Tokenizer) stateFunc {
+
+	switch t.prev.(type) {
+	case rightParenthesis:
+		t.push(plus{})
+	case float64:
+		t.push(plus{})
+	default:
+		t.push(unaryPlus{})
+	}
+	return startState
+}
 
 func minusState(t *Tokenizer) stateFunc {
 
@@ -148,21 +150,20 @@ func multiplyState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-//
-// func exponantState(t *Tokenizer) stateFunc {
-// 	t.push(Exponant{})
-// 	return startState
-// }
-//
-// func divideState(t *Tokenizer) stateFunc {
-// 	t.push(Divide{})
-// 	return startState
-// }
-//
-// func moduloState(t *Tokenizer) stateFunc {
-// 	t.push(Modulo{})
-// 	return startState
-// }
+func exponantState(t *Tokenizer) stateFunc {
+	t.push(exponant{})
+	return startState
+}
+
+func divideState(t *Tokenizer) stateFunc {
+	t.push(divide{})
+	return startState
+}
+
+func moduloState(t *Tokenizer) stateFunc {
+	t.push(modulo{})
+	return startState
+}
 
 func leftParenthesisState(t *Tokenizer) stateFunc {
 	t.push(leftParenthesis{})
@@ -214,42 +215,41 @@ func greaterState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-//
-// func lowerState(t *Tokenizer) stateFunc {
-//
-// 	r, ok := t.read()
-// 	if !ok {
-// 		t.err = errors.New("unrecognized token \"<\"")
-// 		return nil
-// 	}
-//
-// 	if isEqual(r) {
-// 		t.push(LowerEqual{})
-// 		return startState
-// 	}
-// 	t.unread()
-//
-// 	t.push(Lower{})
-// 	return startState
-// }
-//
-// func exclamationState(t *Tokenizer) stateFunc {
-//
-// 	r, ok := t.read()
-// 	if !ok {
-// 		t.err = errors.New("unrecognized token \"!\"")
-// 		return nil
-// 	}
-//
-// 	if !isEqual(r) {
-// 		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
-// 		return nil
-// 	}
-//
-// 	t.push(Different{})
-// 	return startState
-// }
-//
+func lowerState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"<\"")
+		return nil
+	}
+
+	if isEqual(r) {
+		t.push(lowerEqual{})
+		return startState
+	}
+	t.unread()
+
+	t.push(lower{})
+	return startState
+}
+
+func exclamationState(t *Tokenizer) stateFunc {
+
+	r, ok := t.read()
+	if !ok {
+		t.err = errors.New("unrecognized token \"!\"")
+		return nil
+	}
+
+	if !isEqual(r) {
+		t.err = fmt.Errorf("unrecognized token \"!%s\"", string(r))
+		return nil
+	}
+
+	t.push(different{})
+	return startState
+}
+
 func doubleQuoteState(t *Tokenizer) stateFunc {
 
 	for {
@@ -288,24 +288,24 @@ func alphaNumState(t *Tokenizer) stateFunc {
 
 	case isComma(r):
 		fallthrough
-		// 	case isPlus(r):
-		// 		fallthrough
+	case isPlus(r):
+		fallthrough
 	case isMultiply(r):
 		fallthrough
-		// 	case isDivide(r):
-		// 		fallthrough
-		// 	case isModulo(r):
-		// 		fallthrough
-		// 	case isExponant(r):
-		// 		fallthrough
+	case isDivide(r):
+		fallthrough
+	case isModulo(r):
+		fallthrough
+	case isExponant(r):
+		fallthrough
 	case isEqual(r):
 		fallthrough
 	case isGreater(r):
 		fallthrough
-		// 	case isLower(r):
-		// 		fallthrough
-		// 	case isExclamation(r):
-		// 		fallthrough
+	case isLower(r):
+		fallthrough
+	case isExclamation(r):
+		fallthrough
 	case isDoubleQuote(r):
 		fallthrough
 	case isrightParenthesis(r):

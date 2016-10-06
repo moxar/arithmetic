@@ -129,6 +129,46 @@ func TestTokenize(t *testing.T) {
 			out: []interface{}{1.0, greater{}, 2.0},
 			err: false,
 		},
+		{
+			in:  "1 + 2",
+			out: []interface{}{1.0, plus{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "+ 2",
+			out: []interface{}{unaryPlus{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 / 2",
+			out: []interface{}{1.0, divide{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 % 2",
+			out: []interface{}{1.0, modulo{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 ^ 2",
+			out: []interface{}{1.0, exponant{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 < 2",
+			out: []interface{}{1.0, lower{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 <= 2",
+			out: []interface{}{1.0, lowerEqual{}, 2.0},
+			err: false,
+		},
+		{
+			in:  "1 != 2",
+			out: []interface{}{1.0, different{}, 2.0},
+			err: false,
+		},
 	} {
 
 		out, err := Tokenize(c.in)
