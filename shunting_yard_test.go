@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestShuntingYard(t *testing.T) {
+func TestshuntingYard(t *testing.T) {
 
 	for i, c := range []struct {
 		in  []interface{}
@@ -159,7 +159,7 @@ func TestShuntingYard(t *testing.T) {
 			err: false,
 		},
 	} {
-		out, err := ShuntingYard(c.in)
+		out, err := shuntingYard(c.in)
 		if (err != nil) != c.err {
 			t.Log("case", i+1, "unexpected error")
 			t.Log("want:", c.err)

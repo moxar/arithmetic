@@ -9,9 +9,9 @@ import (
 	"unicode"
 )
 
-func Tokenize(input string) ([]interface{}, error) {
+func tokenize(input string) ([]interface{}, error) {
 
-	t := &Tokenizer{
+	t := &tokenizer{
 		reader: bufio.NewReader(strings.NewReader(input)),
 	}
 
@@ -26,9 +26,9 @@ func Tokenize(input string) ([]interface{}, error) {
 	return t.output, nil
 }
 
-type stateFunc func(t *Tokenizer) stateFunc
+type stateFunc func(t *tokenizer) stateFunc
 
-type Tokenizer struct {
+type tokenizer struct {
 	reader  *bufio.Reader
 	payload string
 	prev    interface{}
@@ -36,12 +36,12 @@ type Tokenizer struct {
 	err     error
 }
 
-func (t *Tokenizer) push(token interface{}) {
+func (t *tokenizer) push(token interface{}) {
 	t.prev = token
 	t.output = append(t.output, token)
 }
 
-func (t *Tokenizer) read() (rune, bool) {
+func (t *tokenizer) read() (rune, bool) {
 	r, _, err := t.reader.ReadRune()
 	if err != nil {
 		return 0, false
@@ -50,11 +50,11 @@ func (t *Tokenizer) read() (rune, bool) {
 	return r, true
 }
 
-func (t *Tokenizer) unread() {
+func (t *tokenizer) unread() {
 	t.reader.UnreadRune()
 }
 
-func startState(t *Tokenizer) stateFunc {
+func startState(t *tokenizer) stateFunc {
 	t.payload = ""
 
 	r, ok := t.read()
@@ -119,7 +119,7 @@ func startState(t *Tokenizer) stateFunc {
 	}
 }
 
-func plusState(t *Tokenizer) stateFunc {
+func plusState(t *tokenizer) stateFunc {
 
 	switch t.prev.(type) {
 	case rightParenthesis:
@@ -132,7 +132,7 @@ func plusState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func minusState(t *Tokenizer) stateFunc {
+func minusState(t *tokenizer) stateFunc {
 
 	switch t.prev.(type) {
 	case rightParenthesis:
@@ -145,42 +145,42 @@ func minusState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func multiplyState(t *Tokenizer) stateFunc {
+func multiplyState(t *tokenizer) stateFunc {
 	t.push(multiply{})
 	return startState
 }
 
-func exponantState(t *Tokenizer) stateFunc {
+func exponantState(t *tokenizer) stateFunc {
 	t.push(exponant{})
 	return startState
 }
 
-func divideState(t *Tokenizer) stateFunc {
+func divideState(t *tokenizer) stateFunc {
 	t.push(divide{})
 	return startState
 }
 
-func moduloState(t *Tokenizer) stateFunc {
+func moduloState(t *tokenizer) stateFunc {
 	t.push(modulo{})
 	return startState
 }
 
-func leftParenthesisState(t *Tokenizer) stateFunc {
+func leftParenthesisState(t *tokenizer) stateFunc {
 	t.push(leftParenthesis{})
 	return startState
 }
 
-func rightParenthesisState(t *Tokenizer) stateFunc {
+func rightParenthesisState(t *tokenizer) stateFunc {
 	t.push(rightParenthesis{})
 	return startState
 }
 
-func commaState(t *Tokenizer) stateFunc {
+func commaState(t *tokenizer) stateFunc {
 	t.push(comma{})
 	return startState
 }
 
-func equalState(t *Tokenizer) stateFunc {
+func equalState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
@@ -197,7 +197,7 @@ func equalState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func greaterState(t *Tokenizer) stateFunc {
+func greaterState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
@@ -215,7 +215,7 @@ func greaterState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func lowerState(t *Tokenizer) stateFunc {
+func lowerState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
@@ -233,7 +233,7 @@ func lowerState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func exclamationState(t *Tokenizer) stateFunc {
+func exclamationState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
@@ -250,7 +250,7 @@ func exclamationState(t *Tokenizer) stateFunc {
 	return startState
 }
 
-func doubleQuoteState(t *Tokenizer) stateFunc {
+func doubleQuoteState(t *tokenizer) stateFunc {
 
 	for {
 		r, ok := t.read()
@@ -268,7 +268,7 @@ func doubleQuoteState(t *Tokenizer) stateFunc {
 	}
 }
 
-func alphaNumState(t *Tokenizer) stateFunc {
+func alphaNumState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {

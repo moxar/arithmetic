@@ -7,13 +7,13 @@ import (
 )
 
 func init() {
-	RegisterFunction("max", Max)
+	RegisterFunction("max", max)
 }
 
-func Max(args ...interface{}) (interface{}, error) {
+func max(args ...interface{}) (interface{}, error) {
 
 	var def bool
-	var max float64
+	var m float64
 	for _, a := range args {
 		o, ok := a.(float64)
 		if !ok {
@@ -21,16 +21,16 @@ func Max(args ...interface{}) (interface{}, error) {
 		}
 
 		if !def {
-			max = o
+			m = o
 			def = true
 		}
 
-		max = math.Max(max, o)
+		m = math.Max(m, o)
 	}
 
 	if !def {
 		return nil, errors.New("max error: no argument provided")
 	}
 
-	return max, nil
+	return m, nil
 }

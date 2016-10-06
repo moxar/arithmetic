@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func Solve(input []interface{}) (interface{}, error) {
+func solve(input []interface{}) (interface{}, error) {
 	st := &stack{}
 
 	for _, t := range input {

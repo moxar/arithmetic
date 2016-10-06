@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func ShuntingYard(input []interface{}) ([]interface{}, error) {
+func shuntingYard(input []interface{}) ([]interface{}, error) {
 
 	os := &stack{}
 	as := &stack{}

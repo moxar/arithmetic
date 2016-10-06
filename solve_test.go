@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestSolve(t *testing.T) {
+func Testsolve(t *testing.T) {
 
 	for i, c := range []struct {
 		in  []interface{}
@@ -74,7 +74,7 @@ func TestSolve(t *testing.T) {
 			err: false,
 		},
 		{
-			in:  []interface{}{2.0, variable{"e", math.E}, multiply{}, 10.0, 2, function{"max", Max}},
+			in:  []interface{}{2.0, variable{"e", math.E}, multiply{}, 10.0, 2, function{"max", max}},
 			out: 10.0,
 			err: false,
 		},
@@ -94,7 +94,7 @@ func TestSolve(t *testing.T) {
 			err: true,
 		},
 		{
-			in:  []interface{}{true, 1.0, 0.0, 3, function{"if", If}},
+			in:  []interface{}{true, 1.0, 0.0, 3, function{"if", if_}},
 			out: 1.0,
 			err: false,
 		},
@@ -160,7 +160,7 @@ func TestSolve(t *testing.T) {
 		},
 	} {
 
-		out, err := Solve(c.in)
+		out, err := solve(c.in)
 		if (err != nil) != c.err {
 			t.Log("case", i+1, "unexpected error")
 			t.Log("want:", c.err)

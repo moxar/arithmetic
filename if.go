@@ -5,10 +5,10 @@ import (
 )
 
 func init() {
-	RegisterFunction("if", If)
+	RegisterFunction("if", if_)
 }
 
-func If(args ...interface{}) (interface{}, error) {
+func if_(args ...interface{}) (interface{}, error) {
 
 	if len(args) != 3 {
 		return nil, fmt.Errorf("if requires 3 arguments, %d provided", len(args))

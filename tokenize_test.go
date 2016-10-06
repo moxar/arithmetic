@@ -10,7 +10,7 @@ func f(label string) function {
 	return function{label: label}
 }
 
-func TestTokenize(t *testing.T) {
+func Testtokenize(t *testing.T) {
 
 	RegisterExpression(func(input string) (interface{}, bool) {
 		if input == "xxx" {
@@ -171,7 +171,7 @@ func TestTokenize(t *testing.T) {
 		},
 	} {
 
-		out, err := Tokenize(c.in)
+		out, err := tokenize(c.in)
 		if (err != nil) != c.err {
 			t.Log("case", i+1, "unexpected error")
 			t.Log("want:", c.err)
