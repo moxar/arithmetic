@@ -126,6 +126,8 @@ func plusState(t *tokenizer) stateFunc {
 		t.push(plus{})
 	case float64:
 		t.push(plus{})
+	case variable:
+		t.push(plus{})
 	default:
 		t.push(unaryPlus{})
 	}
@@ -272,7 +274,7 @@ func alphaNumState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
-		token, err := parse(t.payload)
+		token, err := t.parse(t.payload)
 		if err != nil {
 			t.err = err
 			return nil
@@ -314,7 +316,7 @@ func alphaNumState(t *tokenizer) stateFunc {
 		fallthrough
 	case isMinus(r):
 		t.unread()
-		token, err := parse(t.payload)
+		token, err := t.parse(t.payload)
 		if err != nil {
 			t.err = err
 			return nil
@@ -396,7 +398,7 @@ func isSpace(r rune) bool {
 	return unicode.IsSpace(r)
 }
 
-func parse(input string) (interface{}, error) {
+func (t *tokenizer) parse(input string) (interface{}, error) {
 
 	input = strings.ToLower(input)
 
@@ -417,10 +419,10 @@ func parse(input string) (interface{}, error) {
 		}
 	}
 
-	f, err := strconv.ParseFloat(input, 64)
-	if err != nil {
-		return nil, fmt.Errorf("invalid numeric value: %s", input)
+	n, err := strconv.ParseFloat(input, 64)
+	if err == nil {
+		return n, nil
 	}
 
-	return f, nil
+	return nil, fmt.Errorf("unrecognized variable, function or expression: %s", input)
 }

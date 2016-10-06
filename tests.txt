@@ -1,2 +1,15 @@
 1 + 2 = 3
+1 + 2.0 = 3
+
+a + 2.0 = error
+"a" + 2.0 = error
 2 % 3 = 2
+2.4 % 3 = error
+e == e = true
+e > 2 = true
+"a" == "a" = true
+e == 4 = false
+max(1,2,3,4) = 4
+if(true,0,1) = 0
+if(false,1,0) = 0
+if(max(e,2)>4,1,0) = 0

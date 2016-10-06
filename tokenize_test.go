@@ -10,7 +10,7 @@ func f(label string) function {
 	return function{label: label}
 }
 
-func Testtokenize(t *testing.T) {
+func Test_tokenize(t *testing.T) {
 
 	RegisterExpression(func(input string) (interface{}, bool) {
 		if input == "xxx" {
@@ -107,6 +107,11 @@ func Testtokenize(t *testing.T) {
 		{
 			in:  "xxx",
 			out: []interface{}{variable{"xxx", "3x"}},
+			err: false,
+		},
+		{
+			in:  "e + 2",
+			out: []interface{}{variable{"e", math.E}, plus{}, 2.0},
 			err: false,
 		},
 		{

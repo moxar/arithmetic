@@ -30,8 +30,7 @@ func (o lower) solve(st *stack) (interface{}, error) {
 		return false, nil
 	}
 
-	b, _ = eq(left, right)
-	return !b, nil
+	return !eq(left, right), nil
 }
 
 type lowerEqual struct{}

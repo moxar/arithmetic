@@ -16,36 +16,72 @@ func invalidExpressionError(o fmt.Stringer, left, right interface{}) error {
 	return fmt.Errorf("invalid expression %v %s %v", left, o, right)
 }
 
-func eq(o1, o2 interface{}) (bool, bool) {
+func eq(o1, o2 interface{}) bool {
 
-	// Compare floats.
-	f1, ok1 := o1.(float64)
-	f2, ok2 := o2.(float64)
-	if ok1 != ok2 {
-		return false, false
+	f1, ok1 := toFloat(o1)
+	f2, ok2 := toFloat(o2)
+	if ok1 && ok2 {
+		return f1 == f2
 	}
-	if ok1 {
-		return f1 == f2, true
-	}
-
-	// Compare other types...
-
-	return false, false
+	
+	return o1 == o2
 }
 
 func gt(o1, o2 interface{}) (bool, bool) {
 
-	// Compare floats.
-	f1, ok1 := o1.(float64)
-	f2, ok2 := o2.(float64)
-	if ok1 != ok2 {
+	f1, ok := toFloat(o1)
+	if !ok {
 		return false, false
 	}
-	if ok1 {
-		return f1 > f2, true
+	
+	f2, ok := toFloat(o2)
+	if !ok {
+		return false, false
 	}
+	
+	return f1 > f2, true
+}
 
-	// Compare other types...
+func floatToInt(o float64) (int, bool) {
+	i := int(o)
+	if float64(i) == o {
+		return i, true
+	}
+	return 0, false
+}
 
-	return false, false
+func toFloat(val interface{}) (float64, bool) {
+	switch t := val.(type) {
+		
+	case float64:
+		return t, true
+		
+	case variable:
+		v, ok := t.value.(float64)
+		if !ok {
+			return 0, false
+		}
+		return v, true
+		
+	default:
+		return 0, false
+	}
+}
+
+func toBool(val interface{}) (bool, bool) {
+	switch t := val.(type) {
+		
+	case bool:
+		return t, true
+		
+	case variable:
+		v, ok := t.value.(bool)
+		if !ok {
+			return false, false
+		}
+		return v, true
+		
+	default:
+		return false, false
+	}
 }

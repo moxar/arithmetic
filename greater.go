@@ -58,6 +58,5 @@ func (o greaterEqual) solve(st *stack) (interface{}, error) {
 		return true, nil
 	}
 
-	b, _ = eq(left, right)
-	return b, nil
+	return eq(left, right), nil
 }

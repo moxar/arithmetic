@@ -3,7 +3,6 @@ package arithmetic
 import (
 	"errors"
 	"fmt"
-	"math"
 )
 
 func init() {
@@ -12,24 +11,32 @@ func init() {
 
 func max(args ...interface{}) (interface{}, error) {
 
-	var def bool
 	var m float64
+	var def bool
+
+	var f float64
 	for _, a := range args {
-		o, ok := a.(float64)
-		if !ok {
-			return nil, fmt.Errorf("max error: argument must be float, having %v(%T)", a)
+		switch t := a.(type) {
+		case float64:
+			f = t
+		case variable:
+			v, ok := t.value.(float64)
+			if !ok {
+				return nil, fmt.Errorf("max requires numeric arguments, %s given", t)
+			}
+			f = v
+		default:
+			return nil, fmt.Errorf("max requires numeric arguments, %v given", a)
 		}
 
-		if !def {
-			m = o
+		if f > m || !def {
 			def = true
+			m = f
 		}
-
-		m = math.Max(m, o)
 	}
 
 	if !def {
-		return nil, errors.New("max error: no argument provided")
+		return nil, errors.New("max requires at least one argument")
 	}
 
 	return m, nil

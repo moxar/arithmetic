@@ -11,17 +11,17 @@ func (o plus) precedence() uint8 {
 }
 
 func (o plus) solve(st *stack) (interface{}, error) {
-	right, err := st.popFloat()
+	o2, err := st.popFloat()
 	if err != nil {
 		return nil, rightError(o)
 	}
 
-	left, err := st.popFloat()
+	o1, err := st.popFloat()
 	if err != nil {
-		return nil, leftError(o, right)
+		return nil, leftError(o, o2)
 	}
 
-	return left + right, nil
+	return o1 + o2, nil
 }
 
 type unaryPlus struct{}

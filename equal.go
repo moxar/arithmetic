@@ -21,12 +21,7 @@ func (o equal) solve(st *stack) (interface{}, error) {
 		return nil, leftError(o, right)
 	}
 
-	b, ok := eq(left, right)
-	if !ok {
-		return nil, invalidExpressionError(o, left, right)
-	}
-
-	return b, nil
+	return eq(left, right), nil
 }
 
 type different struct{}
@@ -50,10 +45,5 @@ func (o different) solve(st *stack) (interface{}, error) {
 		return nil, leftError(o, right)
 	}
 
-	b, ok := eq(left, right)
-	if !ok {
-		return nil, invalidExpressionError(o, left, right)
-	}
-
-	return !b, nil
+	return !eq(left, right), nil
 }

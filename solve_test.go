@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Testsolve(t *testing.T) {
+func Test_solve(t *testing.T) {
 
 	for i, c := range []struct {
 		in  []interface{}
@@ -134,8 +134,8 @@ func Testsolve(t *testing.T) {
 			err: false,
 		},
 		{
-			in:  []interface{}{2, 2, modulo{}},
-			out: 0,
+			in:  []interface{}{2.0, 2.0, modulo{}},
+			out: 0.0,
 			err: false,
 		},
 		{

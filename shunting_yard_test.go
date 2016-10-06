@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestshuntingYard(t *testing.T) {
+func Test_shuntingYard(t *testing.T) {
 
 	for i, c := range []struct {
 		in  []interface{}
@@ -156,6 +156,11 @@ func TestshuntingYard(t *testing.T) {
 		{
 			in:  []interface{}{1.0, different{}, 2.0},
 			out: []interface{}{1.0, 2.0, different{}},
+			err: false,
+		},
+		{
+			in:  []interface{}{"a", plus{}, 2},
+			out: []interface{}{"a", 2, plus{}},
 			err: false,
 		},
 	} {
