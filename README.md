@@ -80,6 +80,8 @@ Additionnaly, it supports the boolean `true` and `false`.
 The package supports the following functions:
 
 	* max(a, b, c...). Note: Max only supports float, but can use any number of arguments.
+	* min(a, b, c...). Note: Min only supports float, but can use any number of arguments.
+	* mean(a, b, c...). Note: Mean only supports float, but can use any number of arguments.
 	* if(condition, success, failure).
 
 ## Extension
