@@ -33,10 +33,16 @@ func invalidExpressionError(o fmt.Stringer, left, right interface{}) error {
 
 func eq(o1, o2 interface{}) bool {
 
-	f1, ok1 := toFloat(o1)
-	f2, ok2 := toFloat(o2)
+	f1, ok1 := ToFloat(o1)
+	f2, ok2 := ToFloat(o2)
 	if ok1 && ok2 {
 		return f1 == f2
+	}
+	
+	b1, ok1 := ToBool(o1)
+	b2, ok1 := ToBool(o2)
+	if ok1 && ok2 {
+		return b1 == b2
 	}
 
 	return o1 == o2
@@ -44,12 +50,12 @@ func eq(o1, o2 interface{}) bool {
 
 func gt(o1, o2 interface{}) (bool, bool) {
 
-	f1, ok := toFloat(o1)
+	f1, ok := ToFloat(o1)
 	if !ok {
 		return false, false
 	}
 
-	f2, ok := toFloat(o2)
+	f2, ok := ToFloat(o2)
 	if !ok {
 		return false, false
 	}
@@ -65,7 +71,7 @@ func floatToInt(o float64) (int, bool) {
 	return 0, false
 }
 
-func toFloat(val interface{}) (float64, bool) {
+func ToFloat(val interface{}) (float64, bool) {
 	switch t := val.(type) {
 
 	case float64:
@@ -83,7 +89,7 @@ func toFloat(val interface{}) (float64, bool) {
 	}
 }
 
-func toBool(val interface{}) (bool, bool) {
+func ToBool(val interface{}) (bool, bool) {
 	switch t := val.(type) {
 
 	case bool:
