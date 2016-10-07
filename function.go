@@ -26,17 +26,7 @@ func RegisterFunction(label string, f Function) {
 
 	label = strings.ToLower(label)
 
-	if _, ok := functions[label]; ok {
-		panic(fmt.Sprintf("%s already defined as function", label))
-	}
+	mustBeUnique(label)
 
-	if _, ok := variables[label]; ok {
-		panic(fmt.Sprintf("%s already defined as variable", label))
-	}
-
-	var o function
-	o.label = label
-	o.solve = f
-
-	functions[label] = o
+	functions[label] = function{label, f}
 }

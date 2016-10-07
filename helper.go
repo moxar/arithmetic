@@ -4,6 +4,21 @@ import (
 	"fmt"
 )
 
+func mustBeUnique(label string) {
+
+	if _, ok := functions[label]; ok {
+		panic(fmt.Sprintf("%s already defined as function", label))
+	}
+
+	if _, ok := variables[label]; ok {
+		panic(fmt.Sprintf("%s already defined as variable", label))
+	}
+
+	if _, ok := aliases[label]; ok {
+		panic(fmt.Sprintf("%s already defined as alias", label))
+	}
+}
+
 func leftError(o fmt.Stringer, v interface{}) error {
 	return fmt.Errorf("invalid operation: \"%s %v\" must be preceeded by a valid operand or expression", o, v)
 }

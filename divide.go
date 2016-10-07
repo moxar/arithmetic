@@ -1,6 +1,6 @@
 package arithmetic
 
-import(
+import (
 	"errors"
 )
 
@@ -24,7 +24,7 @@ func (o divide) solve(st *stack) (interface{}, error) {
 	if err != nil {
 		return nil, leftError(o, right)
 	}
-	
+
 	if right == 0 {
 		return nil, errors.New("division by 0")
 	}

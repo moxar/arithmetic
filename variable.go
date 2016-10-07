@@ -1,7 +1,6 @@
 package arithmetic
 
 import (
-	"fmt"
 	"math"
 	"strings"
 )
@@ -28,15 +27,10 @@ func RegisterVariable(label string, value interface{}) {
 
 	label = strings.ToLower(label)
 
-	if _, ok := functions[label]; ok {
-		panic(fmt.Sprintf("%s already defined as function", label))
-	}
-
-	if _, ok := variables[label]; ok {
-		panic(fmt.Sprintf("%s already defined as variable", label))
-	}
+	mustBeUnique(label)
 
 	variables[label] = variable{label, value}
+
 }
 
 type variable struct {
