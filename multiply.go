@@ -7,7 +7,7 @@ func (o multiply) String() string {
 }
 
 func (o multiply) precedence() uint8 {
-	return 2
+	return precedenceDivide
 }
 
 func (o multiply) solve(st *stack) (interface{}, error) {

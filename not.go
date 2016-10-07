@@ -7,7 +7,7 @@ func (o not) String() string {
 }
 
 func (o not) precedence() uint8 {
-	return 4
+	return precedenceUnary
 }
 
 func (o not) solve(st *stack) (interface{}, error) {

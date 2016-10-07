@@ -7,7 +7,7 @@ func (o lower) String() string {
 }
 
 func (o lower) precedence() uint8 {
-	return 0
+	return precedenceGreater
 }
 
 func (o lower) solve(st *stack) (interface{}, error) {
@@ -40,7 +40,7 @@ func (o lowerEqual) String() string {
 }
 
 func (o lowerEqual) precedence() uint8 {
-	return 0
+	return precedenceGreater
 }
 
 func (o lowerEqual) solve(st *stack) (interface{}, error) {

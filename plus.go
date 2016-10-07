@@ -7,7 +7,7 @@ func (o plus) String() string {
 }
 
 func (o plus) precedence() uint8 {
-	return 1
+	return precedencePlus
 }
 
 func (o plus) solve(st *stack) (interface{}, error) {
@@ -31,7 +31,7 @@ func (o unaryPlus) String() string {
 }
 
 func (o unaryPlus) precedence() uint8 {
-	return 4
+	return precedenceUnary
 }
 
 func (o unaryPlus) solve(st *stack) (interface{}, error) {

@@ -14,7 +14,7 @@ func mean(args ...interface{}) (interface{}, error) {
 	if len(args) == 0 {
 		return nil, errors.New("mean requires at least one argument")
 	}
-	
+
 	var sum float64
 	for _, a := range args {
 		switch t := a.(type) {

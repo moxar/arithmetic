@@ -7,7 +7,7 @@ func (o modulo) String() string {
 }
 
 func (o modulo) precedence() uint8 {
-	return 2
+	return precedenceDivide
 }
 
 func (o modulo) solve(st *stack) (interface{}, error) {

@@ -11,7 +11,7 @@ func (o divide) String() string {
 }
 
 func (o divide) precedence() uint8 {
-	return 2
+	return precedenceDivide
 }
 
 func (o divide) solve(st *stack) (interface{}, error) {

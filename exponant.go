@@ -11,7 +11,7 @@ func (o exponant) String() string {
 }
 
 func (o exponant) precedence() uint8 {
-	return 3
+	return precedenceExponant
 }
 
 func (o exponant) solve(st *stack) (interface{}, error) {

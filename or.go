@@ -7,7 +7,7 @@ func (o or) String() string {
 }
 
 func (o or) precedence() uint8 {
-	return 3
+	return precedenceOr
 }
 
 func (o or) solve(st *stack) (interface{}, error) {
