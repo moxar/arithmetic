@@ -28,3 +28,4 @@ not true = false
 not false = true
 NOT true = false
 if(true && not false, true, false)=true
+2/0 = error
