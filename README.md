@@ -109,7 +109,9 @@ A variable is a mapping from a string to a value. In this example, when the pars
 			// ...
 		}
 		
-		fmt.Println(v) // print 730
+		fmt.Println(v) 
+		
+		// Output: 730
 	}
 ```
 
@@ -122,41 +124,36 @@ A function is a mapping from a string to a function that returns a value. In thi
 	
 	import (
 		"fmt"
-		"strings"
 	
 		"github.com/moxar/arithmetic"
 	)
 
 	func init() {
-		arithmetic.RegisterFunction("contains", contains)
+
+		// Register a new function, that increments the value by one.
+		arithmetic.RegisterFunction("increment", func(args ...interface{}) (interface{}, error) {
+			if len(args) != 1 {
+				return nil, fmt.Errorf("increment requires one argument, %d provided", len(args))
+			}
+
+			f, ok := arithmetic.ToFloat(args[0])
+			if !ok {
+				return nil, fmt.Errorf("increment requires integer argument, %v (%T) provided", args[0], args[0])
+			}
+
+			return int(f) + 1, nil
+		})
 	}
 	
 	func main() {
-		
-		v, err := arithmetic.Parse("contains(bar, a)")
+
+		v, err := Parse("increment(2)")
 		if err != nil {
 			// ...
 		}
-		
-		fmt.Println(v) // print true
-	}
-	
-	func contains(args ...interface{}) (interface{}, error) {
-		if len(args) != 2 {
-			return nil, fmt.Errorf("contains expects 2 arguments, %d provided", len(args))
-		}
-		
-		needle, ok := args[0].(string)
-		if !ok {
-			return nil, fmt.Errorf("contains expects first arguments to be string, %v (%T) provided", args[0], args[0])
-		}
-		
-		haystack, ok := args[1].(string)
-		if !ok {
-			return nil, fmt.Errorf("contains expects first arguments to be string, %v (%T) provided", args[1], args[1])
-		}
-		
-		return strings.Contains(needle, haystack), nil
+
+		fmt.Println(v)
+		// Output: 3
 	}
 ```
 
@@ -182,42 +179,34 @@ An expression is a function that transforms an input to a value. The boolean tel
 		if len(input) == 0 {
 			return nil, false
 		}
-		
+
 		if input[0] != 'f' {
 			return nil, false
 		}
 		
+
 		for i, r := range input {
-			if i == 0 {
-				continue
-			}
-			
-			if r != 'o'  && r != 'O' {
+		
+			if r != 'o' {
 				return nil, false
 			}
 		}
-		
+
 		return true, true
-	}
+	})
 	
 	func main() {
-		
-		v, err := arithmetic.Parse("fooOOoOoooOOOooOo")
+
+		v, err := arithmetic.Parse("fooOOoOoooOOOooOo && true")
 		if err != nil {
 			// ...
 		}
-		
-		fmt.Println(v) // print true
+
+		fmt.Println(v) 
+		// Output: true
 	}
 ```
-
-## TODO
-
-* Document sources
-* Link references (Rob Pike golang lexing, Shunting-Yard, extended Shunting-Yard)
-* Unit Tests (test.txt)
 
 ## Disclaimer
 
 This lib is still at early development stages. The API is most likely susceptible to change.
-Beside, it is not (yet) fully tested.

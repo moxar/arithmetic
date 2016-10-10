@@ -1,5 +1,6 @@
 package arithmetic
 
+// and (||) operator.
 type or struct{}
 
 func (o or) String() string {
@@ -11,6 +12,9 @@ func (o or) precedence() uint8 {
 }
 
 func (o or) solve(st *stack) (interface{}, error) {
+
+	// Retreive right and left terms from stack.
+	// The term can be of type "bool" or "variable".
 	right, err := st.popBool()
 	if err != nil {
 		return nil, rightError(o)

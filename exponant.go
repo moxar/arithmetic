@@ -4,6 +4,7 @@ import (
 	"math"
 )
 
+// exponant (^) operator.
 type exponant struct{}
 
 func (o exponant) String() string {
@@ -15,6 +16,9 @@ func (o exponant) precedence() uint8 {
 }
 
 func (o exponant) solve(st *stack) (interface{}, error) {
+
+	// Retreive right and left terms from stack.
+	// The term can be of type "float" or "variable".
 	right, err := st.popFloat()
 	if err != nil {
 		return nil, rightError(o)

@@ -5,10 +5,12 @@ import (
 	"fmt"
 )
 
+// stack implementation.
 type stack struct {
 	values []interface{}
 }
 
+// pop returns the last inserted value from the stack and removes it.
 func (s *stack) pop() (interface{}, bool) {
 	last := len(s.values) - 1
 	if last >= 0 {
@@ -19,15 +21,19 @@ func (s *stack) pop() (interface{}, bool) {
 	return nil, false
 }
 
+// push appends a value to the stack.
 func (s *stack) push(v interface{}) {
 	s.values = append(s.values, v)
 }
 
+// inc increments the last inserted value. This value must be an int.
 func (s *stack) inc() {
 	v, _ := s.popInt()
 	s.push(v + 1)
 }
 
+// slice returns an slice of the last n elements of the stack. The elements are remove
+// from the stack.
 func (s *stack) slice(size int) ([]interface{}, error) {
 	l := len(s.values)
 	if l < size {
@@ -39,6 +45,7 @@ func (s *stack) slice(size int) ([]interface{}, error) {
 	return out, nil
 }
 
+// popFloat is a helper that pops the stack and returns the element as float.
 func (s *stack) popFloat() (float64, error) {
 	v, ok := s.pop()
 	if !ok {
@@ -60,6 +67,7 @@ func (s *stack) popFloat() (float64, error) {
 	return f, nil
 }
 
+// popInt is a helper that pops the stack and returns the element as int.
 func (s *stack) popInt() (int, error) {
 	v, ok := s.pop()
 	if !ok {
@@ -81,6 +89,7 @@ func (s *stack) popInt() (int, error) {
 	return i, nil
 }
 
+// popBool is a helper that pops the stack and returns the element as bool.
 func (s *stack) popBool() (bool, error) {
 	v, ok := s.pop()
 	if !ok {

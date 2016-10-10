@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// mustBeUnique ensures a label is not registered in the functions, variables or aliases.
 func mustBeUnique(label string) {
 
 	if _, ok := functions[label]; ok {
@@ -19,18 +20,22 @@ func mustBeUnique(label string) {
 	}
 }
 
+// leftError returns the error triggered by an invalid left operand.
 func leftError(o fmt.Stringer, v interface{}) error {
 	return fmt.Errorf("invalid operation: \"%s %v\" must be preceeded by a valid operand or expression", o, v)
 }
 
+// leftError returns the error triggered by an invalid right operand.
 func rightError(o fmt.Stringer) error {
 	return fmt.Errorf("invalid operation: \"%s\" must be followed by a valid operand or expression", o)
 }
 
+// invalidExpressionError returns the error triggered by an invalid expression.
 func invalidExpressionError(o fmt.Stringer, left, right interface{}) error {
 	return fmt.Errorf("invalid expression %v %s %v", left, o, right)
 }
 
+// eq checks if o1 and o2 are equals. It convers types.
 func eq(o1, o2 interface{}) bool {
 
 	f1, ok1 := ToFloat(o1)
@@ -38,7 +43,7 @@ func eq(o1, o2 interface{}) bool {
 	if ok1 && ok2 {
 		return f1 == f2
 	}
-	
+
 	b1, ok1 := ToBool(o1)
 	b2, ok1 := ToBool(o2)
 	if ok1 && ok2 {
@@ -48,6 +53,7 @@ func eq(o1, o2 interface{}) bool {
 	return o1 == o2
 }
 
+// eq checks if o1 is greater than o2. It convers types.
 func gt(o1, o2 interface{}) (bool, bool) {
 
 	f1, ok := ToFloat(o1)
@@ -63,6 +69,7 @@ func gt(o1, o2 interface{}) (bool, bool) {
 	return f1 > f2, true
 }
 
+// floatToInt transforms a float to an int if the decimal part of the float is 0.
 func floatToInt(o float64) (int, bool) {
 	i := int(o)
 	if float64(i) == o {
@@ -71,6 +78,8 @@ func floatToInt(o float64) (int, bool) {
 	return 0, false
 }
 
+// ToFloat casts the input into a float. This helper should be used in the custom funcs to
+// use both floats and named variables (such as "e")
 func ToFloat(val interface{}) (float64, bool) {
 	switch t := val.(type) {
 
@@ -89,6 +98,8 @@ func ToFloat(val interface{}) (float64, bool) {
 	}
 }
 
+// ToBool casts the input into a bool. This helper should be used in the custom funcs to
+// use both bools and named variables (such as "true")
 func ToBool(val interface{}) (bool, bool) {
 	switch t := val.(type) {
 

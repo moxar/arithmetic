@@ -1,7 +1,13 @@
 package arithmetic
 
+// operator designates an object that combines one or two operands to another.
 type operator interface {
+
+	// precedence or priority of the operator.
 	precedence() uint8
+
+	// solve is the function the operator uses to transform the operand. The stack
+	// contains the operands to use. solve returns an transformed operand and an error.
 	solve(*stack) (interface{}, error)
 }
 
@@ -12,9 +18,9 @@ const (
 	precedenceOr uint8 = iota
 	precedenceAnd
 	precedenceEqual
-	precedenceGreater
-	precedencePlus
-	precedenceDivide
+	precedenceLowerGreater
+	precedenceMinusPlus
+	precedenceDivideMultiply
 	precedenceExponant
 	precedenceUnary
 )

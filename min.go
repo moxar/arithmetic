@@ -9,12 +9,16 @@ func init() {
 	RegisterFunction("min", min)
 }
 
+// min is a function that returns the lowest of the provided inputs.
 func min(args ...interface{}) (interface{}, error) {
 
-	var m float64
-	var def bool
+	if len(args) == 0 {
+		return nil, errors.New("min requires at least one argument")
+	}
 
-	var f float64
+	// Ensure each argument is a float, or a "variable" float.
+	var m, f float64
+	var def bool
 	for _, a := range args {
 		switch t := a.(type) {
 		case float64:
@@ -33,10 +37,6 @@ func min(args ...interface{}) (interface{}, error) {
 			def = true
 			m = f
 		}
-	}
-
-	if !def {
-		return nil, errors.New("min requires at least one argument")
 	}
 
 	return m, nil

@@ -23,16 +23,24 @@ func init() {
 
 var variables = map[string]interface{}{}
 
+// RegisterVariable associates a variable to a label.
+// If the label is already defined, RegisterVariable panics.
+// The label is not case sensitive.
 func RegisterVariable(label string, value interface{}) {
 
 	label = strings.ToLower(label)
 
 	mustBeUnique(label)
 
+	if v, ok := value.(int); ok {
+		variables[label] = variable{label, float64(v)}
+		return
+	}
 	variables[label] = variable{label, value}
 
 }
 
+// variable is a structure that holds a variable value and its label.
 type variable struct {
 	label string
 	value interface{}

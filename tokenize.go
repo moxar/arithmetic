@@ -9,6 +9,11 @@ import (
 	"unicode"
 )
 
+// tokenize takes an input and returns an infix slice of tokens.
+// note: spaces are not mandatory.
+//
+// The algorithm is inspired by this:
+// https://www.youtube.com/watch?v=HxaD_trXwRE
 func tokenize(input string) ([]interface{}, error) {
 
 	t := &tokenizer{
@@ -26,8 +31,12 @@ func tokenize(input string) ([]interface{}, error) {
 	return t.output, nil
 }
 
+// stateFunc describes a function that returns another stateFunc.
+// A stateFunc uses its tokenizer to define its output or payload given
+// the current or last read rune.
 type stateFunc func(t *tokenizer) stateFunc
 
+// tokenizer s a structure that handles a reader and tokenizes it.
 type tokenizer struct {
 	reader  *bufio.Reader
 	payload string
@@ -36,11 +45,13 @@ type tokenizer struct {
 	err     error
 }
 
+// push a token to the output.
 func (t *tokenizer) push(token interface{}) {
 	t.prev = token
 	t.output = append(t.output, token)
 }
 
+// read the next rune from the reader.
 func (t *tokenizer) read() (rune, bool) {
 	r, _, err := t.reader.ReadRune()
 	if err != nil {
@@ -50,18 +61,25 @@ func (t *tokenizer) read() (rune, bool) {
 	return r, true
 }
 
+// unread the last read rune of the reader.
 func (t *tokenizer) unread() {
 	t.reader.UnreadRune()
 }
 
+// startState is the default state: it is the state used at the beginning of the input, or after
+// a token has been identified.
 func startState(t *tokenizer) stateFunc {
+
+	// reset the payload before starting.
 	t.payload = ""
 
+	// get the next rune.
 	r, ok := t.read()
 	if !ok {
 		return nil
 	}
 
+	// Choose a state given the rune.
 	switch {
 
 	case isSpace(r):
@@ -315,7 +333,7 @@ func alphaNumState(t *tokenizer) stateFunc {
 
 	r, ok := t.read()
 	if !ok {
-		token, err := t.parse(t.payload)
+		token, err := t.parse()
 		if err != nil {
 			t.err = err
 			return nil
@@ -361,7 +379,7 @@ func alphaNumState(t *tokenizer) stateFunc {
 		fallthrough
 	case isMinus(r):
 		t.unread()
-		token, err := t.parse(t.payload)
+		token, err := t.parse()
 		if err != nil {
 			t.err = err
 			return nil
@@ -451,32 +469,40 @@ func isSpace(r rune) bool {
 	return unicode.IsSpace(r)
 }
 
-func (t *tokenizer) parse(input string) (interface{}, error) {
+// parse the current payload value to tokenize it.
+func (t *tokenizer) parse() (interface{}, error) {
 
-	input = strings.ToLower(input)
+	// make input non-case sensitive.
+	input := strings.ToLower(t.payload)
 
+	// If the input matches a variable, return it.
 	v, ok := variables[input]
 	if ok {
 		return v, nil
 	}
 
+	// If the input matches a function, return it.
 	function, ok := functions[input]
 	if ok {
 		return function, nil
 	}
 
+	// If the input matches an alias, return the aliased value.
 	a, ok := aliases[input]
 	if ok {
 		return a, nil
 	}
 
+	// If the input can be translated by an expression, return a variable
+	// with the input as label, and the expressions output as value.
 	for _, exp := range expressions {
 		op, ok := exp(input)
 		if ok {
-			return variable{input, op}, nil
+			return variable{t.payload, op}, nil
 		}
 	}
 
+	// If the input can be converted in float, return the numeric value.
 	n, err := strconv.ParseFloat(input, 64)
 	if err == nil {
 		return n, nil
