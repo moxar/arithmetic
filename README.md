@@ -1,5 +1,8 @@
 # Arithmetic parser
 
+[![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/moxar/arithmetic)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/moxar/arithmetic/master/LICENSE)
+
 This library parses and solves a mathematical expression.
 
 It uses a Shunting-Yard algorithm (aka Reverse-Polish notation).
